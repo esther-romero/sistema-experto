@@ -36,3 +36,27 @@ conocimiento(los_inocentes, [terror, intriga], [traumatico, suspenso], [sandra_e
 
 conocimiento(dos_corazones, [romantico, hechos_reales], [emotivo,romantico], [jacob_elordi, adan_canto, radha_mitchell]).
 conocimiento(hambre, [dramatico, de_tailandia], [inspirador, suspenso], [chutimon, nopachai, gunn_svasti]).
+
+
+% conocimiento(nombre, [generos], [caracteristicas], [elenco])
+
+%filtrar todas las peliculas por genero dado el genero
+filtrar_genero(GENERO, PELICULA) :- conocimiento(PELICULA, GENEROS, _, _), member(GENERO, GENEROS).
+
+%filtrar todas las peliculas por genero dado una lista de generos
+cumple_con_genero(Pelicula, Genero) :- conocimiento(Pelicula, Generos, _, _), member(Genero, Generos).
+filtrar_por_generos(Generos, Peliculas) :- setof(Pelicula, Genero^(conocimiento(Pelicula, _, _, _), member(Genero, Generos), cumple_con_genero(Pelicula, Genero)), Peliculas).
+
+%filtrar todas las peliculas por caracteristica dado la caracteristica
+filtrar_caracteristica(CARACTERISTICA, PELICULA) :- conocimiento(PELICULA, _, CARACTERISTICAS, _), member(CARACTERISTICA, CARACTERISTICAS).
+
+%filtrar todas las peliculas por caracteristica dado una lista de caracteristicas
+cumple_con_caracteristica(Pelicula, Caracteristica) :- conocimiento(Pelicula, _, Caracteristicas, _), member(Caracteristica, Caracteristicas).
+filtrar_por_caracteristicas(Caracteristicas, Peliculas) :- setof(Pelicula, Caracteristica^(conocimiento(Pelicula, _, _, _), member(Caracteristica, Caracteristicas), cumple_con_caracteristica(Pelicula, Caracteristica)), Peliculas).
+
+%filtrar todas las peliculas por actor dado el actor
+filtrar_actor(ACTOR, PELICULA) :- conocimiento(PELICULA, _, _, ELENCO), member(ACTOR, ELENCO).
+
+%filtrar todas las peliculas por actor dado una lista de actores
+cumple_con_actor(Pelicula, Actor) :- conocimiento(Pelicula, _, _, Elenco), member(Actor, Elenco).
+filtrar_por_actores(Actores, Peliculas) :- setof(Pelicula, Actor^(conocimiento(Pelicula, _, _, _), member(Actor, Actores), cumple_con_actor(Pelicula, Actor)), Peliculas).
