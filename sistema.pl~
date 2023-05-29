@@ -75,7 +75,7 @@ tratamiento(X):- send(@lblExp1,selection('De Acuerdo Al Diagnostico El Tratamien
 
   interfaz_principal:-new(@main,dialog('Sistema Experto de Cine',
         size(1000,1000))),
-        %new(@texto, label(nombre,'El Diagnostico a partir de los datos es:',font('times','roman',18))),
+        new(@texto, label(nombre,'El Diagnostico a partir de los datos es:',font('times','roman',18))),
         new(@resp1, label(nombre,'',font('times','roman',22))), %largo del frame
         new(@lblExp1, label(nombre,'',font('times','roman',14))),
         new(@lblExp2, label(nombre,'',font('times','roman',14))),
@@ -87,12 +87,11 @@ tratamiento(X):- send(@lblExp1,selection('De Acuerdo Al Diagnostico El Tratamien
         new(@btntratamiento,button('¿Tratamiento?')),
 
         nueva_imagen(@main, fondo),
-        %send(@main, display,@botonG,point(138,450)),
-        send(@main, display,@botonG,point(143,425)),
-        send(@main, display,@botonC,point(243,425)),
-        send(@main, display,@botonA,point(393,425)),
-        send(@main, display,@salir,point(495,425)),
-        %send(@main, display,@texto,point(220,130)),
+        send(@main, display,@botonG,point(138,450)),
+        send(@main, display,@botonC,point(238,450)),
+        send(@main, display,@botonA,point(338,450)),
+        send(@main, display,@salir,point(500,450)),
+        send(@main, display,@texto,point(220,130)),
         send(@main, display,@resp1,point(20,180)),
         send(@main,open_centered).
 
