@@ -112,12 +112,13 @@ posicion_generos_agregados(340, 350).
 
 agregar_genero_a_la_lista(Ventana, Genero) :-
   posicion_generos_agregados(X, Y),
-  new(@label_genero, label(nombre, Genero)),
-  send(Ventana, display, @label_genero, point(X, Y)),
+  new(@GeneroXY, label(nombre, Genero)),
+  send(Ventana, display, @GeneroXY, point(X, Y)),
   Y1 is Y + 20,
   retract(posicion_generos_agregados(X, Y)),
-  assert(posicion_generos_agregados(X, Y1)).
-=======
+  assert(posicion_generos_agregados(X, Y1)),
+  assert(generos_usuario(Genero)).
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
   crea_interfaz_inicio:- new(@interfaz,dialog('Sistema Experto de Cine', size(1000,1000))),
@@ -207,5 +208,5 @@ filtrar_por_actores(Actores, Peliculas) :- setof(Pelicula, Actor^(conocimiento(P
 
 % motor de inferencia
 
-generos_usuario(_).
+generos_usuario().
 
