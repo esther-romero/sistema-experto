@@ -7,6 +7,7 @@
 
  resource(inicio, image, image('inicio.jpg')).
  resource(fondo, image, image('fondo.jpg')).
+ resource(generos, image, image('generos.jpg')).
 
  mostrar_imagen(Pantalla, Imagen) :- new(Figura, figure),
                                      new(Bitmap, bitmap(resource(Imagen),@on)),
@@ -25,7 +26,7 @@
                                 send(Bitmap, name, 1),
                                 send(Figura, display, Bitmap),
                                 send(Figura, status, 1),
-                                send(Ventana, display,Figura,point(0,0)).
+                                send(Ventana, display,Figura,point(15,10)).
   imagen_pregunta(Ventana, Imagen) :-new(Figura, figure),
                                 new(Bitmap, bitmap(resource(Imagen),@on)),
                                 send(Bitmap, name, 1),
@@ -90,15 +91,37 @@
 
        % borrado:- send(@resp1, selection('')).
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+interfaz_genero :- new(@nueva, dialog("Hola", size(1000,1000))),
+                 new(@btnAccion, button('ACCION', message(@prolog, agregar_genero_a_la_lista, @nueva, accion))),
+                  new(@btnDramatico, button('DRAMATICO', message(@prolog, agregar_genero_a_la_lista, @nueva, dramatico))),
+                  new(@btnComedia, button('COMEDIA', message(@prolog, agregar_genero_a_la_lista, @nueva, comedia))),
+                  new(@btnTerror, button('TERROR', message(@prolog, agregar_genero_a_la_lista, @nueva, terror))),
+                  new(@btnRomantico, button('ROMANTICO', message(@prolog, agregar_genero_a_la_lista, @nueva, romantico))),
+                  nueva_imagen(@nueva, generos),
+                  send(@nueva, display,@btnAccion,point(130,250)),
+                  send(@nueva, display,@btnDramatico,point(230,250)),
+                  send(@nueva, display,@btnComedia,point(330,250)),
+                  send(@nueva, display,@btnTerror,point(430,250)),
+                  send(@nueva, display,@btnRomantico,point(530,250)),
 
-interfaz_genero :- new(@nueva, dialog('Sistema Experto de Cine', size(1000,1000))),
-                 new(@texto, label(nombre,'¿Que Genero De Pelicula Desea Ver?',font('times','roman',18))),
-                 new(@caja, text_item('Ingrese Genero')),
-                 nueva_imagen(@nueva, inicio),
-                 send(@nueva, display,@texto,point(20,20)),
-                 send(@nueva, display,@caja,point(20,50)),
                  send(@nueva, open_centered).
+
+:-dynamic posicion_generos_agregados/2.
+posicion_generos_agregados(340, 350).
+
+agregar_genero_a_la_lista(Ventana, Genero) :-
+  list_generos_usuario(GenerosActuales),
+  not(member(Genero, GenerosActuales)),
+  posicion_generos_agregados(X, Y),
+  new(@GeneroXY, label(nombre, Genero)),
+  send(Ventana, display, @GeneroXY, point(X, Y)),
+  Y1 is Y + 20,
+  retract(posicion_generos_agregados(X, Y)),
+  assert(posicion_generos_agregados(X, Y1)),
+  assert(generos_usuario(Genero)).
+
+list_generos_usuario(Lista) :- findall(X, generos_usuario(X), Lista). 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -189,5 +212,5 @@ filtrar_por_actores(Actores, Peliculas) :- setof(Pelicula, Actor^(conocimiento(P
 
 % motor de inferencia
 
-generos_usuario(_).
+generos_usuario().
 
