@@ -4,6 +4,9 @@
  :- use_module(library(pce_style_item)).
  :- dynamic color/2.
  :- dynamic generos_usuario/1.
+ :-dynamic posicion_generos_agregados/2.
+ :- dynamic posicion_peliculas_recomendadas/2.
+ :- dynamic labels_generos_usuario/1.
 
 resource(inicio, image, image('inicio.jpg')).
 resource(fondo, image, image('fondo.jpg')).
@@ -35,75 +38,79 @@ imagen_pregunta(Ventana, Imagen) :- new(Figura, figure),
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-  interfaz_principal:-  new(@main,dialog('Sistema Experto de Cine', size(1000,1000))),
-                        new(@resp1, label(nombre,'',font('times','roman',22))), %largo del frame
-                        new(@lblExp1, label(nombre,'',font('times','roman',14))),
-                        new(@lblExp2, label(nombre,'',font('times','roman',14))),
-                        new(@botonG, button('GENERO',and(message(@prolog, interfaz_genero), and(message(@main, destroy), message(@main, free))))),
-                        new(@botonC, button('CARACTERISTICAS',and(message(@prolog, interfaz_caracteristicas), and(message(@main, destroy), message(@main, free))))),
-                        new(@botonA, button('ACTORES',and(message(@prolog, interfaz_actor), and(message(@main, destroy), message(@main, free))))),
-                        new(@salir,  button('SALIR',and(message(@main,destroy),message(@main,free)))),
-                        nueva_imagen(@main, fondo),
-                        send(@main, display,@botonG,point(143,425)),
-                        send(@main, display,@botonC,point(243,425)),
-                        send(@main, display,@botonA,point(393,425)),
-                        send(@main, display,@salir,point(495,425)),
-                        send(@main, display,@resp1,point(20,180)),
-                        send(@main, open_centered).
+interfaz_principal:-  new(@main,dialog('Sistema Experto de Cine', size(1000,1000))),
+                      new(@resp1, label(nombre,'',font('times','roman',22))), %largo del frame
+                      new(@lblExp1, label(nombre,'',font('times','roman',14))),
+                      new(@lblExp2, label(nombre,'',font('times','roman',14))),
+                      new(@botonG, button('GENERO',and(message(@prolog, interfaz_genero), and(message(@main, destroy), message(@main, free))))),
+                      new(@botonC, button('CARACTERISTICAS',and(message(@prolog, interfaz_caracteristicas), and(message(@main, destroy), message(@main, free))))),
+                      new(@botonA, button('ACTORES',and(message(@prolog, interfaz_actor), and(message(@main, destroy), message(@main, free))))),
+                      new(@salir,  button('SALIR',and(message(@main,destroy),message(@main,free)))),
+                      nueva_imagen(@main, fondo),
+                      send(@main, display,@botonG,point(143,425)),
+                      send(@main, display,@botonC,point(243,425)),
+                      send(@main, display,@botonA,point(393,425)),
+                      send(@main, display,@salir,point(495,425)),
+                      send(@main, display,@resp1,point(20,180)),
+                      send(@main, open_centered).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-interfaz_genero :- new(@nueva, dialog('Sistema Experto de Cine', size(1000,1000))),
-                 new(@btnAccion, button('ACCION', message(@prolog, agregar_genero_a_la_lista, @nueva, accion))),
-                  new(@btnDramatico, button('DRAMATICO', message(@prolog, agregar_genero_a_la_lista, @nueva, dramatico))),
-                  new(@btnComedia, button('COMEDIA', message(@prolog, agregar_genero_a_la_lista, @nueva, comedia))),
-                  new(@btnTerror, button('TERROR', message(@prolog, agregar_genero_a_la_lista, @nueva, terror))),
-                  new(@btnRomantico, button('ROMANTICO', message(@prolog, agregar_genero_a_la_lista, @nueva, romantico))),
-                  new(@salirGenero,button('SALIR',and(message(@nueva,destroy),message(@nueva,free)))),
-                  new(@btn_recomendar, button('RECOMENDAR', message(@prolog, ventana_recomendaciones))),
-                  nueva_imagen(@nueva, generos),
-                  send(@nueva, display,@btnAccion,point(130,250)),
-                  send(@nueva, display,@btnDramatico,point(230,250)),
-                  send(@nueva, display,@btnComedia,point(330,250)),
-                  send(@nueva, display,@btnTerror,point(430,250)),
-                  send(@nueva, display,@btnRomantico,point(530,250)),
-                  send(@nueva, display,@salirGenero,point(600,540)),
-                  send(@nueva, display,@btn_recomendar,point(480,540)),
-                 send(@nueva, open_centered).
-                 
-ventana_recomendaciones :- 
-  listar_labels_generos_usuario(L),
-  delete_labels_generos_usuario(L),
-  clear_posicion_generos_agregados,
-  assert(posicion_generos_agregados(335, 345)),
-  clear_labels_generos_usuario
-  ,new(@ventana_recomendaciones, dialog('Sistema Experto de Cine', size(600,500))),
-  clear_posicion_peliculas_recomendadas,
-  assert(posicion_peliculas_recomendadas(220, 150)),
-  list_generos_usuario(GenerosIngresados),
-  listar_por_generos(GenerosIngresados, Peliculas),
-  nueva_imagen(@ventana_recomendaciones, recomendaciones),
-  agregar_peliculas_recomendadas(@ventana_recomendaciones, Peliculas),
-  clear_generos_usuario,
-  send(@ventana_recomendaciones, open_centered).
+interfaz_genero :-  new(@nueva, dialog('Sistema Experto de Cine', size(1000,1000))),
+                    new(@btnAccion, button('ACCION', message(@prolog, agregar_genero_a_la_lista, @nueva, accion))),
+                    new(@btnDramatico, button('DRAMATICO', message(@prolog, agregar_genero_a_la_lista, @nueva, dramatico))),
+                    new(@btnComedia, button('COMEDIA', message(@prolog, agregar_genero_a_la_lista, @nueva, comedia))),
+                    new(@btnTerror, button('TERROR', message(@prolog, agregar_genero_a_la_lista, @nueva, terror))),
+                    new(@btnRomantico, button('ROMANTICO', message(@prolog, agregar_genero_a_la_lista, @nueva, romantico))),
+                    new(@salirGenero,button('SALIR',and(message(@nueva,destroy),message(@nueva,free)))),
+                    new(@btn_recomendar, button('RECOMENDAR', message(@prolog, ventana_generos))),
+                    nueva_imagen(@nueva, generos),
+                    send(@nueva, display,@btnAccion,point(130,250)),
+                    send(@nueva, display,@btnDramatico,point(230,250)),
+                    send(@nueva, display,@btnComedia,point(330,250)),
+                    send(@nueva, display,@btnTerror,point(430,250)),
+                    send(@nueva, display,@btnRomantico,point(530,250)),
+                    send(@nueva, display,@salirGenero,point(600,540)),
+                    send(@nueva, display,@btn_recomendar,point(480,540)),
+                    send(@nueva, open_centered).
+generos_usuario().                
 
-:- dynamic posicion_peliculas_recomendadas/2.
+posicion_generos_agregados(335, 345).
 posicion_peliculas_recomendadas(220, 150).
 
-agregar_peliculas_recomendadas(Ventana, []) :- !.
-agregar_peliculas_recomendadas(Ventana, [H|T]) :- 
-  posicion_peliculas_recomendadas(X, Y),
-  new(@PeliculaXY, label(nombre, H, font('times', 'roman', 18))),
-  send(Ventana, display, @PeliculaXY, point(X, Y)),
-  Y1 is Y + 30,
-  retract(posicion_peliculas_recomendadas(X, Y)),
-  assert(posicion_peliculas_recomendadas(X, Y1)),
-  agregar_peliculas_recomendadas(Ventana, T).
+clear_posicion_generos_agregados :- retract(posicion_generos_agregados(X, Y)), fail.
+clear_posicion_generos_agregados.
 
 clear_generos_usuario :- retract(generos_usuario(X)), fail.
 clear_generos_usuario.
 
 clear_posicion_peliculas_recomendadas :- retract(posicion_peliculas_recomendadas(X, Y)), fail.
 clear_posicion_peliculas_recomendadas.
+
+agregar_genero_a_la_lista(Ventana, Genero) :-   list_generos_usuario(GenerosActuales),
+                                                not(member(Genero, GenerosActuales)),
+                                                posicion_generos_agregados(X, Y),
+                                                new(@GeneroXY, label(nombre, Genero, font('times', 'roman', 18))),
+                                                assert(labels_generos_usuario(@GeneroXY)),
+                                                send(Ventana, display, @GeneroXY, point(X, Y)),
+                                                Y1 is Y + 30,
+                                                retract(posicion_generos_agregados(X, Y)),
+                                                assert(posicion_generos_agregados(X, Y1)),
+                                                assert(generos_usuario(Genero)).
+
+ventana_generos :-  listar_labels_generos_usuario(L),
+                    delete_labels_generos_usuario(L),
+                    clear_posicion_generos_agregados,
+                    assert(posicion_generos_agregados(335, 345)),
+                    clear_labels_generos_usuario,
+                    new(@ventana_generos, dialog('Sistema Experto de Cine', size(600,500))),
+                    clear_posicion_peliculas_recomendadas,
+                    assert(posicion_peliculas_recomendadas(220, 150)),
+                    list_generos_usuario(GenerosIngresados),
+                    listar_por_generos(GenerosIngresados, Peliculas),
+                    nueva_imagen(@ventana_generos, recomendaciones),
+                    agregar_peliculas_recomendadas(@ventana_generos, Peliculas),
+                    clear_generos_usuario,
+                    send(@ventana_generos, open_centered).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -121,27 +128,16 @@ interfaz_caracteristicas :- new(@nuevaCarac, dialog('Sistema Experto de Cine', s
                             send(@nuevaCarac, display,@salirCarac,point(600,540)),
                             send(@nuevaCarac, open_centered).
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-:-dynamic posicion_generos_agregados/2.
-posicion_generos_agregados(335, 345).
-
-clear_posicion_generos_agregados :- retract(posicion_generos_agregados(X, Y)), fail.
-clear_posicion_generos_agregados.
-
-agregar_genero_a_la_lista(Ventana, Genero) :-
-  list_generos_usuario(GenerosActuales),
-  not(member(Genero, GenerosActuales)),
-  posicion_generos_agregados(X, Y),
-  new(@GeneroXY, label(nombre, Genero, font('times', 'roman', 18))),
-  assert(labels_generos_usuario(@GeneroXY)),
-  send(Ventana, display, @GeneroXY, point(X, Y)),
-  Y1 is Y + 30,
-  retract(posicion_generos_agregados(X, Y)),
-  assert(posicion_generos_agregados(X, Y1)),
-  assert(generos_usuario(Genero)).
-
+agregar_peliculas_recomendadas(Ventana, []) :- !.
+agregar_peliculas_recomendadas(Ventana, [H|T]) :-   posicion_peliculas_recomendadas(X, Y),
+                                                    new(@PeliculaXY, label(nombre, H, font('times', 'roman', 18))),
+                                                    send(Ventana, display, @PeliculaXY, point(X, Y)),
+                                                    Y1 is Y + 30,
+                                                    retract(posicion_peliculas_recomendadas(X, Y)),
+                                                    assert(posicion_peliculas_recomendadas(X, Y1)),
+                                                    agregar_peliculas_recomendadas(Ventana, T).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -207,11 +203,9 @@ conocimiento(dos_corazones, [romantico, hechos_reales], [emotivo,romantico], [ja
 %reglas
 
 list_generos_usuario(Lista) :- findall(X, generos_usuario(X), Lista). 
-% motor de inferencia
-generos_usuario().
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
-:- dynamic labels_generos_usuario/1.
+
 labels_generos_usuario().
 clear_labels_generos_usuario :- retract(labels_generos_usuario(X)), fail.
 clear_labels_generos_usuario.
@@ -219,14 +213,14 @@ listar_labels_generos_usuario(Lista) :- findall(X, labels_generos_usuario(X), Li
 delete_labels_generos_usuario(Lista) :- eliminar_labels(Lista).
 eliminar_labels([]).
 eliminar_labels([H|T]) :- send(H, free), eliminar_labels(T).
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%555
 
 listar_por_generos([], []).
-listar_por_generos([H|T], Peliculas) :- 
-    listar_por_generos(T, Peliculas2) ,
-    peliculas_por_genero(L, H),
-    append(L, Peliculas2, Res),
-    borrar_repetidos(Res, Peliculas).
+listar_por_generos([H|T], Peliculas) :- listar_por_generos(T, Peliculas2),
+                                        peliculas_por_genero(L, H),
+                                        append(L, Peliculas2, Res),
+                                        borrar_repetidos(Res, Peliculas).
 
 %filtrar todas las peliculas por genero dado el genero
 filtrar_genero(GENERO, PELICULA) :- conocimiento(PELICULA, GENEROS, _, _), member(GENERO, GENEROS).
