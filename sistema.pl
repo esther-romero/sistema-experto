@@ -8,6 +8,7 @@
  resource(inicio, image, image('inicio.jpg')).
  resource(fondo, image, image('fondo.jpg')).
  resource(generos, image, image('generos.jpg')).
+resource(actores, image, image('actores.jpg')).
 
  mostrar_imagen(Pantalla, Imagen) :- new(Figura, figure),
                                      new(Bitmap, bitmap(resource(Imagen),@on)),
@@ -40,9 +41,6 @@
   botones:-borrado,
                 send(@boton, free),
                 send(@btntratamiento,free),
-                % mostrar_diagnostico(Enfermedad),
-                % send(@texto, selection('El Diagnostico a partir de los datos es:')),
-                % send(@resp1, selection(Enfermedad)),
                 new(@boton, button('GENERO',
                     message(@prolog, botones)
                     )),
@@ -78,7 +76,7 @@
         new(@lblExp2, label(nombre,'',font('times','roman',14))),
         new(@botonG, button('GENERO',and(message(@prolog, interfaz_genero), and(message(@main, destroy), message(@main, free))))),
         new(@botonC, button('CARACTERISTICAS',message(@prolog, botones))),
-        new(@botonA, button('ACTORES',message(@prolog, botones))),
+        new(@botonA, button('ACTORES',and(message(@prolog, interfaz_actor), and(message(@main, destroy), message(@main, free))))),
         new(@salir,button('SALIR',and(message(@main,destroy),message(@main,free)))),
 
         nueva_imagen(@main, fondo),
@@ -92,7 +90,7 @@
        % borrado:- send(@resp1, selection('')).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-interfaz_genero :- new(@nueva, dialog("Hola", size(1000,1000))),
+interfaz_genero :- new(@nueva, dialog('Sistema Experto de Cine', size(1000,1000))),
                  new(@btnAccion, button('ACCION', message(@prolog, agregar_genero_a_la_lista, @nueva, accion))),
                   new(@btnDramatico, button('DRAMATICO', message(@prolog, agregar_genero_a_la_lista, @nueva, dramatico))),
                   new(@btnComedia, button('COMEDIA', message(@prolog, agregar_genero_a_la_lista, @nueva, comedia))),
@@ -106,6 +104,15 @@ interfaz_genero :- new(@nueva, dialog("Hola", size(1000,1000))),
                   send(@nueva, display,@btnRomantico,point(530,250)),
 
                  send(@nueva, open_centered).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+interfaz_actor :- new(@nuevaActores, dialog('Sistema Experto de Cine', size(1000,1000))),
+                  nueva_imagen(@nuevaActores, actores),
+                 send(@nuevaActores, open_centered).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 :-dynamic posicion_generos_agregados/2.
 posicion_generos_agregados(340, 350).
