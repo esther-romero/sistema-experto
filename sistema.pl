@@ -111,6 +111,8 @@ interfaz_genero :- new(@nueva, dialog("Hola", size(1000,1000))),
 posicion_generos_agregados(340, 350).
 
 agregar_genero_a_la_lista(Ventana, Genero) :-
+  list_generos_usuario(GenerosActuales),
+  not(member(Genero, GenerosActuales)),
   posicion_generos_agregados(X, Y),
   new(@GeneroXY, label(nombre, Genero)),
   send(Ventana, display, @GeneroXY, point(X, Y)),
@@ -118,6 +120,8 @@ agregar_genero_a_la_lista(Ventana, Genero) :-
   retract(posicion_generos_agregados(X, Y)),
   assert(posicion_generos_agregados(X, Y1)),
   assert(generos_usuario(Genero)).
+
+list_generos_usuario(Lista) :- findall(X, generos_usuario(X), Lista). 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
