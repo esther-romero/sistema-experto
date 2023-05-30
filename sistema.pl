@@ -7,6 +7,7 @@
 
  resource(inicio, image, image('inicio.jpg')).
  resource(fondo, image, image('fondo.jpg')).
+ resource(generos, image, image('generos.jpg')).
 
  mostrar_imagen(Pantalla, Imagen) :- new(Figura, figure),
                                      new(Bitmap, bitmap(resource(Imagen),@on)),
@@ -100,19 +101,30 @@ tratamiento(X):- send(@lblExp1,selection('De Acuerdo Al Diagnostico El Tratamien
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 abrir_ventana :- new(@nueva, dialog("Hola", size(1000,1000))),
-                 new(@btnAccion, button('ACCION')),
-                  new(@btnDramatico, button('DRAMATICO')),
-                  new(@btnComedia, button('COMEDIA')),
-                  new(@btnTerror, button('TERROR')),
-                  new(@btnRomantico, button('ROMANTICO')),
-                 nueva_imagen(@nueva, fondo),
-                  send(@nueva, display,@btnAccion,point(110,250)),
-                  send(@nueva, display,@btnDramatico,point(210,250)),
-                  send(@nueva, display,@btnComedia,point(310,250)),
-                  send(@nueva, display,@btnTerror,point(410,250)),
-                  send(@nueva, display,@btnRomantico,point(510,250)),
+                 new(@btnAccion, button('ACCION', message(@prolog, agregar_genero_a_la_lista, @nueva, accion))),
+                  new(@btnDramatico, button('DRAMATICO', message(@prolog, agregar_genero_a_la_lista, @nueva, dramatico))),
+                  new(@btnComedia, button('COMEDIA', message(@prolog, agregar_genero_a_la_lista, @nueva, comedia))),
+                  new(@btnTerror, button('TERROR', message(@prolog, agregar_genero_a_la_lista, @nueva, terror))),
+                  new(@btnRomantico, button('ROMANTICO', message(@prolog, agregar_genero_a_la_lista, @nueva, romantico))),
+                  nueva_imagen(@nueva, generos),
+                  send(@nueva, display,@btnAccion,point(130,250)),
+                  send(@nueva, display,@btnDramatico,point(230,250)),
+                  send(@nueva, display,@btnComedia,point(330,250)),
+                  send(@nueva, display,@btnTerror,point(430,250)),
+                  send(@nueva, display,@btnRomantico,point(530,250)),
 
                  send(@nueva, open_centered).
+
+:-dynamic posicion_generos_agregados/2.
+posicion_generos_agregados(340, 350).
+
+agregar_genero_a_la_lista(Ventana, Genero) :-
+  posicion_generos_agregados(X, Y),
+  new(@label_genero, label(nombre, Genero)),
+  send(Ventana, display, @label_genero, point(X, Y)),
+  Y1 is Y + 20,
+  retract(posicion_generos_agregados(X, Y)),
+  assert(posicion_generos_agregados(X, Y1)).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
   crea_interfaz_inicio:- new(@interfaz,dialog('Sistema Experto de recomendacion de peliculas',
