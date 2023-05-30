@@ -69,38 +69,30 @@
                           send(@tratam, transient_for, @main),
                           send(@tratam, open_centered).
 
-tratamiento(X):- send(@lblExp1,selection('De Acuerdo Al Diagnostico El Tratamiento Es:')),
-                 mostrar_imagen_tratamiento(@tratam,X).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-  interfaz_principal:-new(@main,dialog('Sistema Experto de Cine',
-        size(1000,1000))),
-        %new(@texto, label(nombre,'El Diagnostico a partir de los datos es:',font('times','roman',18))),
+  interfaz_principal:-new(@main,dialog('Sistema Experto de Cine', size(1000,1000))),
         new(@resp1, label(nombre,'',font('times','roman',22))), %largo del frame
         new(@lblExp1, label(nombre,'',font('times','roman',14))),
         new(@lblExp2, label(nombre,'',font('times','roman',14))),
-        new(@botonG, button('GENERO',and(message(@prolog, abrir_ventana), and(message(@main, destroy), message(@main, free))))),
+        new(@botonG, button('GENERO',and(message(@prolog, interfaz_genero), and(message(@main, destroy), message(@main, free))))),
         new(@botonC, button('CARACTERISTICAS',message(@prolog, botones))),
         new(@botonA, button('ACTORES',message(@prolog, botones))),
         new(@salir,button('SALIR',and(message(@main,destroy),message(@main,free)))),
 
-        new(@btntratamiento,button('¿Tratamiento?')),
-
         nueva_imagen(@main, fondo),
-        %send(@main, display,@botonG,point(138,450)),
         send(@main, display,@botonG,point(143,425)),
         send(@main, display,@botonC,point(243,425)),
         send(@main, display,@botonA,point(393,425)),
         send(@main, display,@salir,point(495,425)),
-        %send(@main, display,@texto,point(220,130)),
         send(@main, display,@resp1,point(20,180)),
         send(@main,open_centered).
 
        % borrado:- send(@resp1, selection('')).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-abrir_ventana :- new(@nueva, dialog("Hola", size(1000,1000))),
+interfaz_genero :- new(@nueva, dialog("Hola", size(1000,1000))),
                  new(@btnAccion, button('ACCION', message(@prolog, agregar_genero_a_la_lista, @nueva, accion))),
                   new(@btnDramatico, button('DRAMATICO', message(@prolog, agregar_genero_a_la_lista, @nueva, dramatico))),
                   new(@btnComedia, button('COMEDIA', message(@prolog, agregar_genero_a_la_lista, @nueva, comedia))),
@@ -125,10 +117,10 @@ agregar_genero_a_la_lista(Ventana, Genero) :-
   Y1 is Y + 20,
   retract(posicion_generos_agregados(X, Y)),
   assert(posicion_generos_agregados(X, Y1)).
+=======
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-  crea_interfaz_inicio:- new(@interfaz,dialog('Sistema Experto de recomendacion de peliculas',
-  size(1000,1000))),
+  crea_interfaz_inicio:- new(@interfaz,dialog('Sistema Experto de Cine', size(1000,1000))),
 
   mostrar_imagen(@interfaz, inicio),
 
@@ -160,6 +152,7 @@ conocimiento(lou, [dramatico, accion, aventura], [crudo, suspenso], [allison_jan
 conocimiento(pixeles, [comedia, accion, aventurera], [emocionante], [adam_sandler, kevin_james, michelle_monaghan]).
 
 %DRAMA
+conocimiento(hambre, [dramatico, de_tailandia], [inspirador, suspenso], [chutimon, nopachai, gunn_svasti]).
 conocimiento(crepusculo, [dramatico, romantico], [inquietud, suspenso, romantico], [kristen_stewart, robert_pattinson, billy_burke]).
 conocimiento(anonima, [dramatico, romantico], [excentrico, optimista, romantico], [annie_cabello, ralf, estefi_merelles]).
 conocimiento(paternidad, [dramatico, hechos_reales], [emotivo], [kevin_hart, alfre_woodard, lil_rel]).
@@ -184,8 +177,8 @@ conocimiento(sing, [familia, comedia, infantil], [disparatado], [matthew_mcconau
 conocimiento(tin_tina, [terror, intriga], [traumatico], [milesa_smit, jaime_lorente, anastasia_russo]).
 conocimiento(los_inocentes, [terror, intriga], [traumatico, suspenso], [sandra_escacena, bruna_gonzalez, claudia_placer]).
 
+%ROMANTICO
 conocimiento(dos_corazones, [romantico, hechos_reales], [emotivo,romantico], [jacob_elordi, adan_canto, radha_mitchell]).
-conocimiento(hambre, [dramatico, de_tailandia], [inspirador, suspenso], [chutimon, nopachai, gunn_svasti]).
 
 
 % conocimiento(nombre, [generos], [caracteristicas], [elenco])
