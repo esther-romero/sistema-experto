@@ -79,7 +79,7 @@ tratamiento(X):- send(@lblExp1,selection('De Acuerdo Al Diagnostico El Tratamien
         new(@resp1, label(nombre,'',font('times','roman',22))), %largo del frame
         new(@lblExp1, label(nombre,'',font('times','roman',14))),
         new(@lblExp2, label(nombre,'',font('times','roman',14))),
-        new(@botonG, button('GENERO',message(@prolog, botones))),
+        new(@botonG, button('GENERO',and(message(@prolog, abrir_ventana), and(message(@main, destroy), message(@main, free))))),
         new(@botonC, button('CARACTERISTICAS',message(@prolog, botones))),
         new(@botonA, button('ACTORES',message(@prolog, botones))),
         new(@salir,button('SALIR',and(message(@main,destroy),message(@main,free)))),
@@ -98,7 +98,13 @@ tratamiento(X):- send(@lblExp1,selection('De Acuerdo Al Diagnostico El Tratamien
 
        % borrado:- send(@resp1, selection('')).
 
-
+abrir_ventana :- new(@nueva, dialog("Hola", size(1000,1000))),
+                 new(@texto, label(nombre,'¿Que Genero De Pelicula Desea Ver?',font('times','roman',18))),
+                 new(@caja, text_item('Ingrese Genero')),
+                 nueva_imagen(@nueva, inicio),
+                 send(@nueva, display,@texto,point(20,20)),
+                 send(@nueva, display,@caja,point(20,50)),
+                 send(@nueva, open_centered).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
   crea_interfaz_inicio:- new(@interfaz,dialog('Sistema Experto de recomendacion de peliculas',

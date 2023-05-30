@@ -74,18 +74,23 @@ filtrar_genero(GENERO, PELICULA) :- conocimiento(PELICULA, GENEROS, _, _), membe
 %todas las peliculas que cumplen con el genero dado
 peliculas_por_genero(Peliculas, GENERO) :- findall(X, filtrar_genero(GENERO, X), Peliculas).
 
+% listar todos los actores conocidos
+actores_conocidos(Actores) :- buscar_actores_conocidos(L), aplanar_lista(L, Res), borrar_repetidos(Res, Actores).
+buscar_actores_conocidos(L) :- findall(X, conocimiento(_,_, _, X), L).
+
+/*
+    UTILS
+*/
+
+% eliminar elementos repetidos de una lista
 borrar_repetidos([], []).
 borrar_repetidos([X|Resto], SinRepetidos) :- member(X, Resto), borrar_repetidos(Resto, SinRepetidos).
 borrar_repetidos([X|Resto], SinRepetidos) :- not(member(X, Resto)), borrar_repetidos(Resto, Res), SinRepetidos = [X | Res].
 
-
-
-actores_conocidos(Actores) :- buscar_actores_conocidos(L), aplanar_lista(L, Res), borrar_repetidos(Res, Actores).
-
-buscar_actores_conocidos(L) :- findall(X, conocimiento(_,_, _, X), L).
-
+% aplanar lista de listas
 aplanar_lista([], []).
 aplanar_lista([H|T], Aplanada) :- aplanar_lista(T, Aplanada2), append(H, Aplanada2, Aplanada).
+
 
 % motor de inferencia
 
