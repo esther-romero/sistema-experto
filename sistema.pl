@@ -5,89 +5,51 @@
  :- dynamic color/2.
  :- dynamic generos_usuario/1.
 
- resource(inicio, image, image('inicio.jpg')).
- resource(fondo, image, image('fondo.jpg')).
- resource(generos, image, image('generos.jpg')).
+resource(inicio, image, image('inicio.jpg')).
+resource(fondo, image, image('fondo.jpg')).
+resource(generos, image, image('generos.jpg')).
 resource(actores, image, image('actores.jpg')).
 resource(caracteristicas, image, image('caracteristicas.jpg')).
 resource(recomendaciones, image, image('recomendaciones.jpg')).
 
- mostrar_imagen(Pantalla, Imagen) :- new(Figura, figure),
-                                     new(Bitmap, bitmap(resource(Imagen),@on)),
-                                     send(Bitmap, name, 1),
-                                     send(Figura, display, Bitmap),
-                                     send(Figura, status, 1),
-                                     send(Pantalla, display,Figura,point(100,80)).
- mostrar_imagen_tratamiento(Pantalla, Imagen) :-new(Figura, figure),
-                                     new(Bitmap, bitmap(resource(Imagen),@on)),
-                                     send(Bitmap, name, 1),
-                                     send(Figura, display, Bitmap),
-                                     send(Figura, status, 1),
-                                     send(Pantalla, display,Figura,point(20,100)).
- nueva_imagen(Ventana, Imagen) :-new(Figura, figure),
-                                new(Bitmap, bitmap(resource(Imagen),@on)),
-                                send(Bitmap, name, 1),
-                                send(Figura, display, Bitmap),
-                                send(Figura, status, 1),
-                                send(Ventana, display,Figura,point(15,10)).
-  imagen_pregunta(Ventana, Imagen) :-new(Figura, figure),
-                                new(Bitmap, bitmap(resource(Imagen),@on)),
-                                send(Bitmap, name, 1),
-                                send(Figura, display, Bitmap),
-                                send(Figura, status, 1),
-                                send(Ventana, display,Figura,point(500,60)).
+mostrar_imagen(Pantalla, Imagen) :- new(Figura, figure),
+                                    new(Bitmap, bitmap(resource(Imagen),@on)),
+                                    send(Bitmap, name, 1),
+                                    send(Figura, display, Bitmap),
+                                    send(Figura, status, 1),
+                                    send(Pantalla, display,Figura,point(100,80)).
+                                  
+nueva_imagen(Ventana, Imagen) :-  new(Figura, figure),
+                                  new(Bitmap, bitmap(resource(Imagen),@on)),
+                                  send(Bitmap, name, 1),
+                                  send(Figura, display, Bitmap),
+                                  send(Figura, status, 1),
+                                  send(Ventana, display,Figura,point(15,10)).
 
+imagen_pregunta(Ventana, Imagen) :- new(Figura, figure),
+                                    new(Bitmap, bitmap(resource(Imagen),@on)),
+                                    send(Bitmap, name, 1),
+                                    send(Figura, display, Bitmap),
+                                    send(Figura, status, 1),
+                                    send(Ventana, display,Figura,point(500,60)).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-  botones:-borrado,
-                send(@boton, free),
-                send(@btntratamiento,free),
-                new(@boton, button('GENERO',
-                    message(@prolog, botones)
-                    )),
-                new(@boton, button('CARACTERISTICAS',
-                    message(@prolog, botones)
-                    )),
-                new(@boton, button('ACTORES',
-                    message(@prolog, botones)
-                    )),
-
-                new(@btntratamiento,button('Detalles y Tratamiento',
-                message(@prolog, mostrar_tratamiento,Enfermedad)
-                )),
-                send(@main, display,@boton,point(20,450)),
-                send(@main, display,@btntratamiento,point(138,450)).
-
-  mostrar_tratamiento(X):-new(@tratam, dialog('Tratamiento')),
-                          send(@tratam, append, label(nombre, 'Explicacion: ')),
-                          send(@tratam, display,@lblExp1,point(70,51)),
-                          send(@tratam, display,@lblExp2,point(50,80)),
-                          tratamiento(X),
-                          send(@tratam, transient_for, @main),
-                          send(@tratam, open_centered).
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-  interfaz_principal:-new(@main,dialog('Sistema Experto de Cine', size(1000,1000))),
-        new(@resp1, label(nombre,'',font('times','roman',22))), %largo del frame
-        new(@lblExp1, label(nombre,'',font('times','roman',14))),
-        new(@lblExp2, label(nombre,'',font('times','roman',14))),
-        new(@botonG, button('GENERO',and(message(@prolog, interfaz_genero), and(message(@main, destroy), message(@main, free))))),
-        new(@botonC, button('CARACTERISTICAS',and(message(@prolog, interfaz_caracteristicas), and(message(@main, destroy), message(@main, free))))),
-        new(@botonA, button('ACTORES',and(message(@prolog, interfaz_actor), and(message(@main, destroy), message(@main, free))))),
-        new(@salir,button('SALIR',and(message(@main,destroy),message(@main,free)))),
-
-        nueva_imagen(@main, fondo),
-        send(@main, display,@botonG,point(143,425)),
-        send(@main, display,@botonC,point(243,425)),
-        send(@main, display,@botonA,point(393,425)),
-        send(@main, display,@salir,point(495,425)),
-        send(@main, display,@resp1,point(20,180)),
-        send(@main,open_centered).
-
-       % borrado:- send(@resp1, selection('')).
+  interfaz_principal:-  new(@main,dialog('Sistema Experto de Cine', size(1000,1000))),
+                        new(@resp1, label(nombre,'',font('times','roman',22))), %largo del frame
+                        new(@lblExp1, label(nombre,'',font('times','roman',14))),
+                        new(@lblExp2, label(nombre,'',font('times','roman',14))),
+                        new(@botonG, button('GENERO',and(message(@prolog, interfaz_genero), and(message(@main, destroy), message(@main, free))))),
+                        new(@botonC, button('CARACTERISTICAS',and(message(@prolog, interfaz_caracteristicas), and(message(@main, destroy), message(@main, free))))),
+                        new(@botonA, button('ACTORES',and(message(@prolog, interfaz_actor), and(message(@main, destroy), message(@main, free))))),
+                        new(@salir,  button('SALIR',and(message(@main,destroy),message(@main,free)))),
+                        nueva_imagen(@main, fondo),
+                        send(@main, display,@botonG,point(143,425)),
+                        send(@main, display,@botonC,point(243,425)),
+                        send(@main, display,@botonA,point(393,425)),
+                        send(@main, display,@salir,point(495,425)),
+                        send(@main, display,@resp1,point(20,180)),
+                        send(@main, open_centered).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 interfaz_genero :- new(@nueva, dialog('Sistema Experto de Cine', size(1000,1000))),
@@ -107,7 +69,7 @@ interfaz_genero :- new(@nueva, dialog('Sistema Experto de Cine', size(1000,1000)
                   send(@nueva, display,@salirGenero,point(600,540)),
                   send(@nueva, display,@btn_recomendar,point(480,540)),
                  send(@nueva, open_centered).
-
+                 
 ventana_recomendaciones :- 
   listar_labels_generos_usuario(L),
   delete_labels_generos_usuario(L),
@@ -159,6 +121,7 @@ interfaz_caracteristicas :- new(@nuevaCarac, dialog('Sistema Experto de Cine', s
                             send(@nuevaCarac, display,@salirCarac,point(600,540)),
                             send(@nuevaCarac, open_centered).
 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 :-dynamic posicion_generos_agregados/2.
@@ -179,28 +142,23 @@ agregar_genero_a_la_lista(Ventana, Genero) :-
   assert(posicion_generos_agregados(X, Y1)),
   assert(generos_usuario(Genero)).
 
-list_generos_usuario(Lista) :- findall(X, generos_usuario(X), Lista). 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-  crea_interfaz_inicio:- new(@interfaz,dialog('Sistema Experto de Cine', size(1000,1000))),
+crea_interfaz_inicio:-  new(@interfaz,dialog('Sistema Experto de Cine', size(1000,1000))),
+                        mostrar_imagen(@interfaz, inicio),
+                        new(BotonComenzar,button('COMENZAR',and(message(@prolog,interfaz_principal) ,
+                        and(message(@interfaz,destroy),message(@interfaz,free)) ))),
+                        new(BotonSalir,button('SALIDA',and(message(@interfaz,destroy),message(@interfaz,free)))),
+                        send(@interfaz,append(BotonComenzar)),
+                        send(@interfaz,append(BotonSalir)),
+                        send(@interfaz,open_centered).
 
-  mostrar_imagen(@interfaz, inicio),
-
-  new(BotonComenzar,button('COMENZAR',and(message(@prolog,interfaz_principal) ,
-  and(message(@interfaz,destroy),message(@interfaz,free)) ))),
-  new(BotonSalir,button('SALIDA',and(message(@interfaz,destroy),message(@interfaz,free)))),
-  send(@interfaz,append(BotonComenzar)),
-  send(@interfaz,append(BotonSalir)),
-  send(@interfaz,open_centered).
-
-  :-crea_interfaz_inicio.
+:-crea_interfaz_inicio.
 
 
 /*
 BASE DE CONOCIMIENTOS
-sistema experto de cine
-CineExperto
 */
 
 % conocimiento(nombre, [generos], [caracteristicas], [elenco])
@@ -245,11 +203,10 @@ conocimiento(los_inocentes, [terror, intriga], [traumatico, suspenso], [sandra_e
 conocimiento(dos_corazones, [romantico, hechos_reales], [emotivo,romantico], [jacob_elordi, adan_canto, radha_mitchell]).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 %reglas
 
-%filtrar todas las peliculas por genero dado el genero
-filtrar_genero(GENERO, PELICULA) :- conocimiento(PELICULA, GENEROS, _, _), member(GENERO, GENEROS).
-
+list_generos_usuario(Lista) :- findall(X, generos_usuario(X), Lista). 
 % motor de inferencia
 generos_usuario().
 
