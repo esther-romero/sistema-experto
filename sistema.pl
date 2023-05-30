@@ -58,8 +58,6 @@ resource(caracteristicas, image, image('caracteristicas.jpg')).
                 send(@main, display,@boton,point(20,450)),
                 send(@main, display,@btntratamiento,point(138,450)).
 
-
-
   mostrar_tratamiento(X):-new(@tratam, dialog('Tratamiento')),
                           send(@tratam, append, label(nombre, 'Explicacion: ')),
                           send(@tratam, display,@lblExp1,point(70,51)),
@@ -97,28 +95,33 @@ interfaz_genero :- new(@nueva, dialog('Sistema Experto de Cine', size(1000,1000)
                   new(@btnComedia, button('COMEDIA', message(@prolog, agregar_genero_a_la_lista, @nueva, comedia))),
                   new(@btnTerror, button('TERROR', message(@prolog, agregar_genero_a_la_lista, @nueva, terror))),
                   new(@btnRomantico, button('ROMANTICO', message(@prolog, agregar_genero_a_la_lista, @nueva, romantico))),
+                  new(@salirGenero,button('SALIR',and(message(@nueva,destroy),message(@nueva,free)))),
                   nueva_imagen(@nueva, generos),
                   send(@nueva, display,@btnAccion,point(130,250)),
                   send(@nueva, display,@btnDramatico,point(230,250)),
                   send(@nueva, display,@btnComedia,point(330,250)),
                   send(@nueva, display,@btnTerror,point(430,250)),
                   send(@nueva, display,@btnRomantico,point(530,250)),
-
+                  send(@nueva, display,@salirGenero,point(600,540)),
                  send(@nueva, open_centered).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 interfaz_actor :- new(@nuevaActores, dialog('Sistema Experto de Cine', size(1000,1000))),
+                  new(@salirActores, button('SALIR',and(message(@nuevaActores,destroy),message(@nuevaActores,free)))),
                   nueva_imagen(@nuevaActores, actores),
-                 send(@nuevaActores, open_centered).
+                  send(@nuevaActores, display,@salirActores,point(600,540)),
+                  send(@nuevaActores, open_centered).
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 interfaz_caracteristicas :- new(@nuevaCarac, dialog('Sistema Experto de Cine', size(1000,1000))),
-                  nueva_imagen(@nuevaCarac, caracteristicas),
-                 send(@nuevaCarac, open_centered).
+                            new(@salirCarac, button('SALIR',and(message(@nuevaCarac,destroy),message(@nuevaCarac,free)))),
+                            nueva_imagen(@nuevaCarac, caracteristicas),
+                            send(@nuevaCarac, display,@salirCarac,point(600,540)),
+                            send(@nuevaCarac, open_centered).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 
 :-dynamic posicion_generos_agregados/2.
 posicion_generos_agregados(340, 350).
@@ -158,6 +161,7 @@ sistema experto de cine
 CineExperto
 */
 
+% conocimiento(nombre, [generos], [caracteristicas], [elenco])
 
 %ACCION
 conocimiento(lucy, [accion, aventura], [adrenalinico, emocionante], [scarlett_johansson, morgan_freeman, min_sik_choi]).
@@ -198,32 +202,8 @@ conocimiento(los_inocentes, [terror, intriga], [traumatico, suspenso], [sandra_e
 %ROMANTICO
 conocimiento(dos_corazones, [romantico, hechos_reales], [emotivo,romantico], [jacob_elordi, adan_canto, radha_mitchell]).
 
-
-% conocimiento(nombre, [generos], [caracteristicas], [elenco])
-
 %filtrar todas las peliculas por genero dado el genero
 filtrar_genero(GENERO, PELICULA) :- conocimiento(PELICULA, GENEROS, _, _), member(GENERO, GENEROS).
 
-%filtrar todas las peliculas por genero dado una lista de generos
-cumple_con_genero(Pelicula, Genero) :- conocimiento(Pelicula, Generos, _, _), member(Genero, Generos).
-filtrar_por_generos(Generos, Peliculas) :- setof(Pelicula, Genero^(conocimiento(Pelicula, _, _, _), member(Genero, Generos), cumple_con_genero(Pelicula, Genero)), Peliculas).
-
-%filtrar todas las peliculas por caracteristica dado la caracteristica
-filtrar_caracteristica(CARACTERISTICA, PELICULA) :- conocimiento(PELICULA, _, CARACTERISTICAS, _), member(CARACTERISTICA, CARACTERISTICAS).
-
-%filtrar todas las peliculas por caracteristica dado una lista de caracteristicas
-cumple_con_caracteristica(Pelicula, Caracteristica) :- conocimiento(Pelicula, _, Caracteristicas, _), member(Caracteristica, Caracteristicas).
-filtrar_por_caracteristicas(Caracteristicas, Peliculas) :- setof(Pelicula, Caracteristica^(conocimiento(Pelicula, _, _, _), member(Caracteristica, Caracteristicas), cumple_con_caracteristica(Pelicula, Caracteristica)), Peliculas).
-
-%filtrar todas las peliculas por actor dado el actor
-filtrar_actor(ACTOR, PELICULA) :- conocimiento(PELICULA, _, _, ELENCO), member(ACTOR, ELENCO).
-
-%filtrar todas las peliculas por actor dado una lista de actores
-cumple_con_actor(Pelicula, Actor) :- conocimiento(Pelicula, _, _, Elenco), member(Actor, Elenco).
-filtrar_por_actores(Actores, Peliculas) :- setof(Pelicula, Actor^(conocimiento(Pelicula, _, _, _), member(Actor, Actores), cumple_con_actor(Pelicula, Actor)), Peliculas).
-
-
 % motor de inferencia
-
 generos_usuario().
-
