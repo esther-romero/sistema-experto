@@ -54,14 +54,14 @@ filtrar_genero(GENERO, PELICULA) :- conocimiento(PELICULA, GENEROS, _, _), membe
 peliculas_por_genero(Peliculas, GENERO) :- findall(X, filtrar_genero(GENERO, X), Peliculas).
 
 borrar_repetidos([], []).
-borrar_repetidos([H|T], R) :- borrar_repetidos(T, L), not(member(H, L)), R = [H | L].
-borrar_repetidos([H|T], R) :- borrar_repetidos(T, L), member(H, L), R = L.
+borrar_repetidos([X|Resto], SinRepetidos) :- member(X, Resto), borrar_repetidos(Resto, SinRepetidos).
+borrar_repetidos([X|Resto], [X|SinRepetidos]) :- not(member(X, Resto)), borrar_repetidos(Resto, SinRepetidos).
 
 listar_por_generos([], []).
 listar_por_generos([H|T], Peliculas) :- listar_por_generos(T, Peliculas2) , peliculas_por_genero(L, H), append(L, Peliculas2, Res), borrar_repetidos(Res, Peliculas).
 
 
-actores_conocidos(Actores) :- buscar_actores_conocidos(L), aplanar_lista(L, Actores).
+actores_conocidos(Actores) :- buscar_actores_conocidos(L), aplanar_lista(L, Res), borrar_repetidos(Res, Actores).
 
 buscar_actores_conocidos(L) :- findall(X, conocimiento(_,_, _, X), L).
 
@@ -76,3 +76,8 @@ list_generos_usuario(Lista) :- findall(X, generos_usuario(X), Lista).
 
 generos_usuario(X), filtrar_genero(X, Pelicula) ,write("Pelicula: "), write(Pelicula), nl, fail.
 
+
+
+/*borrar_repetidos([], []).
+borrar_repetidos([H|T], R) :- borrar_repetidos(T, L), not(member(H, L)), R = [H | L].
+borrar_repetidos([H|T], R) :- borrar_repetidos(T, L).*/
