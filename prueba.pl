@@ -55,7 +55,7 @@ peliculas_por_genero(Peliculas, GENERO) :- findall(X, filtrar_genero(GENERO, X),
 
 borrar_repetidos([], []).
 borrar_repetidos([X|Resto], SinRepetidos) :- member(X, Resto), borrar_repetidos(Resto, SinRepetidos).
-borrar_repetidos([X|Resto], [X|SinRepetidos]) :- not(member(X, Resto)), borrar_repetidos(Resto, SinRepetidos).
+borrar_repetidos([X|Resto], SinRepetidos) :- not(member(X, Resto)), borrar_repetidos(Resto, Res), SinRepetidos = [X | Res].
 
 listar_por_generos([], []).
 listar_por_generos([H|T], Peliculas) :- listar_por_generos(T, Peliculas2) , peliculas_por_genero(L, H), append(L, Peliculas2, Res), borrar_repetidos(Res, Peliculas).
