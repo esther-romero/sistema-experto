@@ -202,6 +202,9 @@ conocimiento(los_inocentes, [terror, intriga], [traumatico, suspenso], [sandra_e
 %ROMANTICO
 conocimiento(dos_corazones, [romantico, hechos_reales], [emotivo,romantico], [jacob_elordi, adan_canto, radha_mitchell]).
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%reglas
+
 %filtrar todas las peliculas por genero dado el genero
 filtrar_genero(GENERO, PELICULA) :- conocimiento(PELICULA, GENEROS, _, _), member(GENERO, GENEROS).
 
