@@ -25,7 +25,7 @@
                                 send(Bitmap, name, 1),
                                 send(Figura, display, Bitmap),
                                 send(Figura, status, 1),
-                                send(Ventana, display,Figura,point(0,0)).
+                                send(Ventana, display,Figura,point(15,10)).
   imagen_pregunta(Ventana, Imagen) :-new(Figura, figure),
                                 new(Bitmap, bitmap(resource(Imagen),@on)),
                                 send(Bitmap, name, 1),
@@ -98,12 +98,20 @@ tratamiento(X):- send(@lblExp1,selection('De Acuerdo Al Diagnostico El Tratamien
 
        % borrado:- send(@resp1, selection('')).
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 abrir_ventana :- new(@nueva, dialog("Hola", size(1000,1000))),
-                 new(@texto, label(nombre,'¿Que Genero De Pelicula Desea Ver?',font('times','roman',18))),
-                 new(@caja, text_item('Ingrese Genero')),
-                 nueva_imagen(@nueva, inicio),
-                 send(@nueva, display,@texto,point(20,20)),
-                 send(@nueva, display,@caja,point(20,50)),
+                 new(@btnAccion, button('ACCION')),
+                  new(@btnDramatico, button('DRAMATICO')),
+                  new(@btnComedia, button('COMEDIA')),
+                  new(@btnTerror, button('TERROR')),
+                  new(@btnRomantico, button('ROMANTICO')),
+                 nueva_imagen(@nueva, fondo),
+                  send(@nueva, display,@btnAccion,point(110,250)),
+                  send(@nueva, display,@btnDramatico,point(210,250)),
+                  send(@nueva, display,@btnComedia,point(310,250)),
+                  send(@nueva, display,@btnTerror,point(410,250)),
+                  send(@nueva, display,@btnRomantico,point(510,250)),
+
                  send(@nueva, open_centered).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
