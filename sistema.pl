@@ -9,6 +9,7 @@
  resource(fondo, image, image('fondo.jpg')).
  resource(generos, image, image('generos.jpg')).
 resource(actores, image, image('actores.jpg')).
+resource(caracteristicas, image, image('caracteristicas.jpg')).
 
  mostrar_imagen(Pantalla, Imagen) :- new(Figura, figure),
                                      new(Bitmap, bitmap(resource(Imagen),@on)),
@@ -75,7 +76,7 @@ resource(actores, image, image('actores.jpg')).
         new(@lblExp1, label(nombre,'',font('times','roman',14))),
         new(@lblExp2, label(nombre,'',font('times','roman',14))),
         new(@botonG, button('GENERO',and(message(@prolog, interfaz_genero), and(message(@main, destroy), message(@main, free))))),
-        new(@botonC, button('CARACTERISTICAS',message(@prolog, botones))),
+        new(@botonC, button('CARACTERISTICAS',and(message(@prolog, interfaz_caracteristicas), and(message(@main, destroy), message(@main, free))))),
         new(@botonA, button('ACTORES',and(message(@prolog, interfaz_actor), and(message(@main, destroy), message(@main, free))))),
         new(@salir,button('SALIR',and(message(@main,destroy),message(@main,free)))),
 
@@ -110,6 +111,11 @@ interfaz_genero :- new(@nueva, dialog('Sistema Experto de Cine', size(1000,1000)
 interfaz_actor :- new(@nuevaActores, dialog('Sistema Experto de Cine', size(1000,1000))),
                   nueva_imagen(@nuevaActores, actores),
                  send(@nuevaActores, open_centered).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+interfaz_caracteristicas :- new(@nuevaCarac, dialog('Sistema Experto de Cine', size(1000,1000))),
+                  nueva_imagen(@nuevaCarac, caracteristicas),
+                 send(@nuevaCarac, open_centered).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
