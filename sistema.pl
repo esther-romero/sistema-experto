@@ -10,6 +10,7 @@
  resource(generos, image, image('generos.jpg')).
 resource(actores, image, image('actores.jpg')).
 resource(caracteristicas, image, image('caracteristicas.jpg')).
+resource(recomendaciones, image, image('recomendaciones.jpg')).
 
  mostrar_imagen(Pantalla, Imagen) :- new(Figura, figure),
                                      new(Bitmap, bitmap(resource(Imagen),@on)),
@@ -111,6 +112,7 @@ ventana_recomendaciones :-
   new(@ventana_recomendaciones, dialog('Sistema Experto de Cine', size(600,500))),
   list_generos_usuario(GenerosIngresados),
   listar_por_generos(GenerosIngresados, Peliculas),
+  nueva_imagen(@ventana_recomendaciones, recomendaciones),
   send(@ventana_recomendaciones, open_centered).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
