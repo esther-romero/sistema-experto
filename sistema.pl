@@ -110,10 +110,33 @@ interfaz_genero :- new(@nueva, dialog('Sistema Experto de Cine', size(1000,1000)
 
 ventana_recomendaciones :- 
   new(@ventana_recomendaciones, dialog('Sistema Experto de Cine', size(600,500))),
+  clear_posicion_peliculas_recomendadas,
+  assert(posicion_peliculas_recomendadas(220, 150)),
   list_generos_usuario(GenerosIngresados),
   listar_por_generos(GenerosIngresados, Peliculas),
   nueva_imagen(@ventana_recomendaciones, recomendaciones),
+  agregar_peliculas_recomendadas(@ventana_recomendaciones, Peliculas),
+  clear_generos_usuario,
   send(@ventana_recomendaciones, open_centered).
+
+:- dynamic posicion_peliculas_recomendadas/2.
+posicion_peliculas_recomendadas(220, 150).
+
+agregar_peliculas_recomendadas(Ventana, []) :- !.
+agregar_peliculas_recomendadas(Ventana, [H|T]) :- 
+  posicion_peliculas_recomendadas(X, Y),
+  new(@PeliculaXY, label(nombre, H, font('times', 'roman', 18))),
+  send(Ventana, display, @PeliculaXY, point(X, Y)),
+  Y1 is Y + 30,
+  retract(posicion_peliculas_recomendadas(X, Y)),
+  assert(posicion_peliculas_recomendadas(X, Y1)),
+  agregar_peliculas_recomendadas(Ventana, T).
+
+clear_generos_usuario :- retract(generos_usuario(X)), fail.
+clear_generos_usuario.
+
+clear_posicion_peliculas_recomendadas :- retract(posicion_peliculas_recomendadas(X, Y)), fail.
+clear_posicion_peliculas_recomendadas.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -134,13 +157,13 @@ interfaz_caracteristicas :- new(@nuevaCarac, dialog('Sistema Experto de Cine', s
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 :-dynamic posicion_generos_agregados/2.
-posicion_generos_agregados(340, 350).
+posicion_generos_agregados(335, 345).
 
 agregar_genero_a_la_lista(Ventana, Genero) :-
   list_generos_usuario(GenerosActuales),
   not(member(Genero, GenerosActuales)),
   posicion_generos_agregados(X, Y),
-  new(@GeneroXY, label(nombre, Genero)),
+  new(@GeneroXY, label(nombre, Genero, font('times', 'roman', 18))),
   send(Ventana, display, @GeneroXY, point(X, Y)),
   Y1 is Y + 30,
   retract(posicion_generos_agregados(X, Y)),
