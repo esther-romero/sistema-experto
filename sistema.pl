@@ -128,7 +128,7 @@ interfaz_actor :- new(@nuevaActores, dialog('Sistema Experto de Cine', size(1000
 
 actores_usuario().
 
-posicion_actores_agregados(335, 345).
+posicion_actores_agregados(270, 290).
 
 clear_posicion_actores_agregados :- retract(posicion_actores_agregados(X, Y)), fail.
 clear_posicion_actores_agregados.
