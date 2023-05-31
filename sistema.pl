@@ -8,7 +8,9 @@
  :- dynamic posicion_peliculas_recomendadas/2.
  :- dynamic labels_generos_usuario/1.
  :- dynamic actores_usuario/1.
+ :- dynamic carac_usuario/1.
  :- dynamic posicion_actores_agregados/2.
+ :- dynamic posicion_carac_agregados/2.
 
 resource(inicio, image, image('inicio.jpg')).
 resource(fondo, image, image('fondo.jpg')).
@@ -169,10 +171,53 @@ ventana_actores :-  listar_labels_actores_usuario(L),
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 interfaz_caracteristicas :- new(@nuevaCarac, dialog('Sistema Experto de Cine', size(1000,1000))),
+                            new(@caja_carac, text_item(caracteristicas)),
                             new(@salirCarac, button('SALIR',and(message(@nuevaCarac,destroy),message(@nuevaCarac,free)))),
+                            new(@btnAgregar, button('AGREGAR', message(@prolog, agregar_carac_a_la_lista, @nuevaCarac, @caja_carac?selection))),
+                            new(@btn_recomendar, button('RECOMENDAR', message(@prolog, ventana_carac))),
                             nueva_imagen(@nuevaCarac, caracteristicas),
-                            send(@nuevaCarac, display,@salirCarac,point(600,540)),
+                            send(@nuevaCarac, display, @caja_carac, point(185, 192)),
+                            send(@nuevaCarac, display, @btnAgregar, point(479, 192)),
+                            send(@nuevaCarac, display,@salirCarac,point(600,565)),
+                            send(@nuevaCarac, display,@btn_recomendar,point(480,565)),
                             send(@nuevaCarac, open_centered).
+
+carac_usuario().
+
+posicion_carac_agregados(270, 290).
+
+clear_posicion_carac_agregados :- retract(posicion_carac_agregados(X, Y)), fail.
+clear_posicion_carac_agregados.
+
+clear_carac_usuario :- retract(carac_usuario(X)), fail.
+clear_carac_usuario.
+
+agregar_carac_a_la_lista(Ventana, Caracteristicas) :-    
+                                                list_carac_usuario(CaracActuales),
+                                                not(member(Caracteristicas, CaracActuales)),
+                                                posicion_carac_agregados(X, Y),
+                                                new(@CaracXY, label(nombre, Caracteristicas, font('times', 'roman', 18))),
+                                                assert(labels_carac_usuario(@CaracXY)),
+                                                send(Ventana, display, @CaracXY, point(X, Y)),
+                                                Y1 is Y + 30,
+                                                retract(posicion_carac_agregados(X, Y)),
+                                                assert(posicion_carac_agregados(X, Y1)),
+                                                assert(carac_usuario(Caracteristicas)).
+
+ventana_carac :-  listar_labels_carac_usuario(L),
+                  delete_labels_carac_usuario(L),
+                  clear_posicion_carac_agregados,
+                  assert(posicion_carac_agregados(270, 290)),
+                  clear_labels_carac_usuario,
+                  new(@ventana_carac, dialog('Sistema Experto de Cine', size(600,500))),
+                  clear_posicion_peliculas_recomendadas,
+                  assert(posicion_peliculas_recomendadas(220, 150)),
+                  list_carac_usuario(CaracIngresados),
+                  listar_por_carac(CaracIngresados, Peliculas),
+                  nueva_imagen(@ventana_carac, recomendaciones),
+                  agregar_peliculas_recomendadas(@ventana_carac, Peliculas),
+                  clear_carac_usuario,
+                  send(@ventana_carac, open_centered).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -252,6 +297,8 @@ list_generos_usuario(Lista) :- findall(X, generos_usuario(X), Lista).
 
 list_actores_usuario(Lista) :- findall(X, actores_usuario(X), Lista).
 
+list_carac_usuario(Lista) :- findall(X, carac_usuario(X), Lista).
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
 
 labels_generos_usuario().
@@ -267,6 +314,12 @@ clear_labels_actores_usuario :- retract(labels_actores_usuario(X)), fail.
 clear_labels_actores_usuario.
 listar_labels_actores_usuario(Lista) :- findall(X, labels_actores_usuario(X), Lista).
 delete_labels_actores_usuario(Lista) :- eliminar_labels(Lista).
+
+labels_carac_usuario().
+clear_labels_carac_usuario :- retract(labels_carac_usuario(X)), fail.
+clear_labels_carac_usuario.
+listar_labels_carac_usuario(Lista) :- findall(X, labels_carac_usuario(X), Lista).
+delete_labels_carac_usuario(Lista) :- eliminar_labels(Lista).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%555
 
@@ -288,6 +341,23 @@ filtrar_actor(ACTOR, PELICULA) :- conocimiento(PELICULA, _, _, ACTORES), member(
 
 % todas las peliculas que cumplen con el actor dado
 peliculas_por_actor(Peliculas, ACTOR) :- findall(X, filtrar_actor(ACTOR, X), Peliculas).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+listar_por_carac([], []).
+listar_por_carac([H|T], Peliculas) :- 
+    listar_por_carac(T, Peliculas2) ,
+    peliculas_por_carac(L, H),
+    append(L, Peliculas2, Res),
+    borrar_repetidos(Res, Peliculas).
+
+% filtrar todas las peliculas por actor dado el actor
+filtrar_carac(CARAC, PELICULA) :- conocimiento(PELICULA, _, CARACS, _), member(CARAC, CARACS).
+
+% todas las peliculas que cumplen con el actor dado
+peliculas_por_carac(Peliculas, CARAC) :- findall(X, filtrar_carac(CARAC, X), Peliculas).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
 
 %filtrar todas las peliculas por genero dado el genero
 filtrar_genero(GENERO, PELICULA) :- conocimiento(PELICULA, GENEROS, _, _), member(GENERO, GENEROS).
