@@ -109,7 +109,12 @@ interfaz_genero :- new(@nueva, dialog('Sistema Experto de Cine', size(1000,1000)
                  send(@nueva, open_centered).
 
 ventana_recomendaciones :- 
-  new(@ventana_recomendaciones, dialog('Sistema Experto de Cine', size(600,500))),
+  listar_labels_generos_usuario(L),
+  delete_labels_generos_usuario(L),
+  clear_posicion_generos_agregados,
+  assert(posicion_generos_agregados(335, 345)),
+  clear_labels_generos_usuario
+  ,new(@ventana_recomendaciones, dialog('Sistema Experto de Cine', size(600,500))),
   clear_posicion_peliculas_recomendadas,
   assert(posicion_peliculas_recomendadas(220, 150)),
   list_generos_usuario(GenerosIngresados),
@@ -159,11 +164,15 @@ interfaz_caracteristicas :- new(@nuevaCarac, dialog('Sistema Experto de Cine', s
 :-dynamic posicion_generos_agregados/2.
 posicion_generos_agregados(335, 345).
 
+clear_posicion_generos_agregados :- retract(posicion_generos_agregados(X, Y)), fail.
+clear_posicion_generos_agregados.
+
 agregar_genero_a_la_lista(Ventana, Genero) :-
   list_generos_usuario(GenerosActuales),
   not(member(Genero, GenerosActuales)),
   posicion_generos_agregados(X, Y),
   new(@GeneroXY, label(nombre, Genero, font('times', 'roman', 18))),
+  assert(labels_generos_usuario(@GeneroXY)),
   send(Ventana, display, @GeneroXY, point(X, Y)),
   Y1 is Y + 30,
   retract(posicion_generos_agregados(X, Y)),
@@ -243,6 +252,17 @@ filtrar_genero(GENERO, PELICULA) :- conocimiento(PELICULA, GENEROS, _, _), membe
 
 % motor de inferencia
 generos_usuario().
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
+:- dynamic labels_generos_usuario/1.
+labels_generos_usuario().
+clear_labels_generos_usuario :- retract(labels_generos_usuario(X)), fail.
+clear_labels_generos_usuario.
+listar_labels_generos_usuario(Lista) :- findall(X, labels_generos_usuario(X), Lista).
+delete_labels_generos_usuario(Lista) :- eliminar_labels(Lista).
+eliminar_labels([]).
+eliminar_labels([H|T]) :- send(H, free), eliminar_labels(T).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%555
 
 listar_por_generos([], []).
 listar_por_generos([H|T], Peliculas) :- 
