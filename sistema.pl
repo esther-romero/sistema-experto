@@ -96,6 +96,7 @@ interfaz_genero :- new(@nueva, dialog('Sistema Experto de Cine', size(1000,1000)
                   new(@btnTerror, button('TERROR', message(@prolog, agregar_genero_a_la_lista, @nueva, terror))),
                   new(@btnRomantico, button('ROMANTICO', message(@prolog, agregar_genero_a_la_lista, @nueva, romantico))),
                   new(@salirGenero,button('SALIR',and(message(@nueva,destroy),message(@nueva,free)))),
+                  new(@btn_recomendar, button('RECOMENDAR', message(@prolog, ventana_recomendaciones))),
                   nueva_imagen(@nueva, generos),
                   send(@nueva, display,@btnAccion,point(130,250)),
                   send(@nueva, display,@btnDramatico,point(230,250)),
@@ -103,7 +104,14 @@ interfaz_genero :- new(@nueva, dialog('Sistema Experto de Cine', size(1000,1000)
                   send(@nueva, display,@btnTerror,point(430,250)),
                   send(@nueva, display,@btnRomantico,point(530,250)),
                   send(@nueva, display,@salirGenero,point(600,540)),
+                  send(@nueva, display,@btn_recomendar,point(480,540)),
                  send(@nueva, open_centered).
+
+ventana_recomendaciones :- 
+  new(@ventana_recomendaciones, dialog('Sistema Experto de Cine', size(600,500))),
+  list_generos_usuario(GenerosIngresados),
+  listar_por_generos(GenerosIngresados, Peliculas),
+  send(@ventana_recomendaciones, open_centered).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -132,7 +140,7 @@ agregar_genero_a_la_lista(Ventana, Genero) :-
   posicion_generos_agregados(X, Y),
   new(@GeneroXY, label(nombre, Genero)),
   send(Ventana, display, @GeneroXY, point(X, Y)),
-  Y1 is Y + 20,
+  Y1 is Y + 30,
   retract(posicion_generos_agregados(X, Y)),
   assert(posicion_generos_agregados(X, Y1)),
   assert(generos_usuario(Genero)).
@@ -207,3 +215,21 @@ filtrar_genero(GENERO, PELICULA) :- conocimiento(PELICULA, GENEROS, _, _), membe
 
 % motor de inferencia
 generos_usuario().
+
+listar_por_generos([], []).
+listar_por_generos([H|T], Peliculas) :- 
+    listar_por_generos(T, Peliculas2) ,
+    peliculas_por_genero(L, H),
+    append(L, Peliculas2, Res),
+    borrar_repetidos(Res, Peliculas).
+
+%filtrar todas las peliculas por genero dado el genero
+filtrar_genero(GENERO, PELICULA) :- conocimiento(PELICULA, GENEROS, _, _), member(GENERO, GENEROS).
+
+%todas las peliculas que cumplen con el genero dado
+peliculas_por_genero(Peliculas, GENERO) :- findall(X, filtrar_genero(GENERO, X), Peliculas).
+
+% eliminar elementos repetidos de una lista
+borrar_repetidos([], []).
+borrar_repetidos([X|Resto], SinRepetidos) :- member(X, Resto), borrar_repetidos(Resto, SinRepetidos).
+borrar_repetidos([X|Resto], SinRepetidos) :- not(member(X, Resto)), borrar_repetidos(Resto, Res), SinRepetidos = [X | Res].
