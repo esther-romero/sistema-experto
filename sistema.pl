@@ -18,6 +18,7 @@ resource(generos, image, image('generos.jpg')).
 resource(actores, image, image('actores.jpg')).
 resource(caracteristicas, image, image('caracteristicas.jpg')).
 resource(recomendaciones, image, image('recomendaciones.jpg')).
+resource(not_found, image, image('not_found.jpg')).
 
 mostrar_imagen(Pantalla, Imagen) :- new(Figura, figure),
                                     new(Bitmap, bitmap(resource(Imagen),@on)),
@@ -111,7 +112,8 @@ ventana_generos :-  listar_labels_generos_usuario(L),
                     assert(posicion_peliculas_recomendadas(220, 150)),
                     list_generos_usuario(GenerosIngresados),
                     listar_por_generos(GenerosIngresados, Peliculas),
-                    nueva_imagen(@ventana_generos, recomendaciones),
+                    not_found_pelicula(Peliculas, Img_Fondo),
+                    nueva_imagen(@ventana_generos, Img_Fondo),
                     agregar_peliculas_recomendadas(@ventana_generos, Peliculas),
                     clear_generos_usuario,
                     send(@ventana_generos, open_centered).
@@ -163,7 +165,8 @@ ventana_actores :-  listar_labels_actores_usuario(L),
                     assert(posicion_peliculas_recomendadas(220, 150)),
                     list_actores_usuario(ActoresIngresados),
                     listar_por_actores(ActoresIngresados, Peliculas),
-                    nueva_imagen(@ventana_actores, recomendaciones),
+                    not_found_pelicula(Peliculas, Img_Fondo),
+                    nueva_imagen(@ventana_actores, Img_Fondo),
                     agregar_peliculas_recomendadas(@ventana_actores, Peliculas),
                     clear_actores_usuario,
                     send(@ventana_actores, open_centered).                                                
@@ -214,7 +217,8 @@ ventana_carac :-  listar_labels_carac_usuario(L),
                   assert(posicion_peliculas_recomendadas(220, 150)),
                   list_carac_usuario(CaracIngresados),
                   listar_por_carac(CaracIngresados, Peliculas),
-                  nueva_imagen(@ventana_carac, recomendaciones),
+                  not_found_pelicula(Peliculas, Img_Fondo),
+                  nueva_imagen(@ventana_carac, Img_Fondo),
                   agregar_peliculas_recomendadas(@ventana_carac, Peliculas),
                   clear_carac_usuario,
                   send(@ventana_carac, open_centered).
@@ -298,6 +302,9 @@ list_generos_usuario(Lista) :- findall(X, generos_usuario(X), Lista).
 list_actores_usuario(Lista) :- findall(X, actores_usuario(X), Lista).
 
 list_carac_usuario(Lista) :- findall(X, carac_usuario(X), Lista).
+
+not_found_pelicula([], not_found).
+not_found_pelicula([H|T], recomendaciones).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
 
