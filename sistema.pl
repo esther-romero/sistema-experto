@@ -120,10 +120,12 @@ interfaz_actor :- new(@nuevaActores, dialog('Sistema Experto de Cine', size(1000
                   new(@caja_actores, text_item(actores)),
                   new(@salirActores, button('SALIR',and(message(@nuevaActores,destroy),message(@nuevaActores,free)))),
                   new(@btnAgregar, button('AGREGAR', message(@prolog, agregar_actor_a_la_lista, @nuevaActores, @caja_actores?selection))),
+                  new(@btn_recomendar, button('RECOMENDAR', message(@prolog, ventana_actores))),
                   nueva_imagen(@nuevaActores, actores),
                   send(@nuevaActores, display, @caja_actores, point(210, 200)),
                   send(@nuevaActores, display, @btnAgregar, point(460, 200)),
-                  send(@nuevaActores, display,@salirActores,point(600,540)),
+                  send(@nuevaActores, display,@salirActores,point(600,565)),
+                  send(@nuevaActores, display,@btn_recomendar,point(480,565)),
                   send(@nuevaActores, open_centered).
 
 actores_usuario().
@@ -141,12 +143,28 @@ agregar_actor_a_la_lista(Ventana, Actor) :-
                                                 not(member(Actor, ActoresActuales)),
                                                 posicion_actores_agregados(X, Y),
                                                 new(@ActorXY, label(nombre, Actor, font('times', 'roman', 18))),
-                                                %assert(labels_generos_usuario(@GeneroXY)),
+                                                assert(labels_actores_usuario(@ActorXY)),
                                                 send(Ventana, display, @ActorXY, point(X, Y)),
                                                 Y1 is Y + 30,
                                                 retract(posicion_actores_agregados(X, Y)),
                                                 assert(posicion_actores_agregados(X, Y1)),
                                                 assert(actores_usuario(Actor)).
+
+
+ventana_actores :-  listar_labels_actores_usuario(L),
+                    delete_labels_actores_usuario(L),
+                    clear_posicion_actores_agregados,
+                    assert(posicion_actores_agregados(270, 290)),
+                    clear_labels_actores_usuario,
+                    new(@ventana_actores, dialog('Sistema Experto de Cine', size(600,500))),
+                    clear_posicion_peliculas_recomendadas,
+                    assert(posicion_peliculas_recomendadas(220, 150)),
+                    list_actores_usuario(ActoresIngresados),
+                    listar_por_actores(ActoresIngresados, Peliculas),
+                    nueva_imagen(@ventana_actores, recomendaciones),
+                    agregar_peliculas_recomendadas(@ventana_actores, Peliculas),
+                    clear_actores_usuario,
+                    send(@ventana_actores, open_centered).                                                
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -243,6 +261,12 @@ listar_labels_generos_usuario(Lista) :- findall(X, labels_generos_usuario(X), Li
 delete_labels_generos_usuario(Lista) :- eliminar_labels(Lista).
 eliminar_labels([]).
 eliminar_labels([H|T]) :- send(H, free), eliminar_labels(T).
+
+labels_actores_usuario().
+clear_labels_actores_usuario :- retract(labels_actores_usuario(X)), fail.
+clear_labels_actores_usuario.
+listar_labels_actores_usuario(Lista) :- findall(X, labels_actores_usuario(X), Lista).
+delete_labels_actores_usuario(Lista) :- eliminar_labels(Lista).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%555
 
