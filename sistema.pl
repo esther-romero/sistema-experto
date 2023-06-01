@@ -47,7 +47,7 @@ interfaz_principal:-  new(@main,dialog('Sistema Experto de Cine', size(1000,1000
                       new(@resp1, label(nombre,'',font('times','roman',22))), %largo del frame
                       new(@lblExp1, label(nombre,'',font('times','roman',14))),
                       new(@lblExp2, label(nombre,'',font('times','roman',14))),
-                      new(@btnPeliculaEspecifica, button('PELICULA ESPECIFICA', message(@prolog, ventana_pel_espe))),
+                      new(@btnPeliculaEspecifica, button('PELICULA ESPECIFICA', and(message(@prolog, ventana_pel_espe), and(message(@main, destroy), message(@main, free))))),
                       new(@botonG, button('GENERO',and(message(@prolog, interfaz_genero), and(message(@main, destroy), message(@main, free))))),
                       new(@botonC, button('CARACTERISTICAS',and(message(@prolog, interfaz_caracteristicas), and(message(@main, destroy), message(@main, free))))),
                       new(@botonA, button('ACTORES',and(message(@prolog, interfaz_actor), and(message(@main, destroy), message(@main, free))))),
@@ -63,8 +63,16 @@ interfaz_principal:-  new(@main,dialog('Sistema Experto de Cine', size(1000,1000
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 ventana_pel_espe :- new(@pel_espe, dialog('Sistema Experto de Cine', size(600, 600))),
+                    new(Generos,  new(Generos, menu(generos))),
                     new(Actores_box, text_item(actores_box)),
+                    new(BtnAgregarActor, button('AGREGAR ACTOR')),
+                    new(Btn_recomendar, button('RECOMENDAR')),
+                    nueva_imagen(@pel_espe, generos),
+                    send(@pel_espe, display, Generos, point(100, 80)),
                     send(@pel_espe, display, Actores_box, point(100, 100)),
+                    send(@pel_espe, display, BtnAgregarActor, point(300, 100)),
+                    send(@pel_espe, display, Btn_recomendar, point(100, 200)),
+                    send_list(Generos, append, [accion, dramatico, comedia, terror, romantico]),
                     send(@pel_espe, open_centered).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 interfaz_genero :-  new(@nueva, dialog('Sistema Experto de Cine', size(1000,1000))),
