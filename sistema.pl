@@ -19,7 +19,7 @@ resource(actores, image, image('actores.jpg')).
 resource(caracteristicas, image, image('caracteristicas.jpg')).
 resource(recomendaciones, image, image('recomendaciones.jpg')).
 resource(not_found, image, image('not_found.jpg')).
-resource(pelicula_especifica, image, image('cambiar.jpg')).
+resource(pelicula_especifica, image, image('pelicula_especifica.jpg')).
 
 mostrar_imagen(Pantalla, Imagen) :- new(Figura, figure),
                                     new(Bitmap, bitmap(resource(Imagen),@on)),
@@ -71,14 +71,14 @@ interfaz_pel_espe :- new(@pel_espe, dialog('Sistema Experto de Cine', size(600, 
                      new(BtnAgregarActor, button('AGREGAR ACTOR', message(@prolog, agregar_actor_a_la_lista, @pel_espe, Actor_box?selection))),
                      new(Btn_recomendar, button('RECOMENDAR', message(@prolog, ventana_pel_espe, Generos?selection))),
                      new(SalirPelEspe,button('ATRAS',and(message(@prolog, interfaz_principal), and(message(@pel_espe,destroy),message(@pel_espe,free))))),
-                     nueva_imagen(@pel_espe, actores),
+                     nueva_imagen(@pel_espe, pelicula_especifica),
                      send(Generos, colour, white),
                      send(LabelActorBox, colour, white),
                      send(@pel_espe, display, Generos, point(65, 160)),
                      send(@pel_espe, display, LabelActorBox, point(110, 200)),
                      send(@pel_espe, display, Actor_box, point(180, 200)),
                      send(@pel_espe, display, BtnAgregarActor, point(430, 200)),
-                     send(@pel_espe, display, LabelActores, point(337, 265)),
+                     send(@pel_espe, display, LabelActores, point(325, 265)),
                      send(@pel_espe, display, Btn_recomendar, point(480, 565)),
                      send(@pel_espe, display,SalirPelEspe,point(600,565)),
                      send_list(Generos, append, ['accion', 'dramatico', 'comedia', 'terror', 'romantico']),
