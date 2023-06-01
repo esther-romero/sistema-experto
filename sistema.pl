@@ -122,13 +122,13 @@ generos_usuario().
 posicion_generos_agregados(335, 345).
 posicion_peliculas_recomendadas(220, 150).
 
-clear_posicion_generos_agregados :- retract(posicion_generos_agregados(X, Y)), fail.
+clear_posicion_generos_agregados :- retract(posicion_generos_agregados(_, _)), fail.
 clear_posicion_generos_agregados.
 
-clear_generos_usuario :- retract(generos_usuario(X)), fail.
+clear_generos_usuario :- retract(generos_usuario(_)), fail.
 clear_generos_usuario.
 
-clear_posicion_peliculas_recomendadas :- retract(posicion_peliculas_recomendadas(X, Y)), fail.
+clear_posicion_peliculas_recomendadas :- retract(posicion_peliculas_recomendadas(_, _)), fail.
 clear_posicion_peliculas_recomendadas.
 
 agregar_genero_a_la_lista(Ventana, Genero) :-   list_generos_usuario(GenerosActuales),
@@ -176,10 +176,10 @@ actores_usuario().
 
 posicion_actores_agregados(270, 295).
 
-clear_posicion_actores_agregados :- retract(posicion_actores_agregados(X, Y)), fail.
+clear_posicion_actores_agregados :- retract(posicion_actores_agregados(_, _)), fail.
 clear_posicion_actores_agregados.
 
-clear_actores_usuario :- retract(actores_usuario(X)), fail.
+clear_actores_usuario :- retract(actores_usuario(_)), fail.
 clear_actores_usuario.
 
 agregar_actor_a_la_lista(Ventana, Actor) :-    
@@ -229,10 +229,10 @@ carac_usuario().
 
 posicion_carac_agregados(270, 290).
 
-clear_posicion_carac_agregados :- retract(posicion_carac_agregados(X, Y)), fail.
+clear_posicion_carac_agregados :- retract(posicion_carac_agregados(_, _)), fail.
 clear_posicion_carac_agregados.
 
-clear_carac_usuario :- retract(carac_usuario(X)), fail.
+clear_carac_usuario :- retract(carac_usuario(_)), fail.
 clear_carac_usuario.
 
 agregar_carac_a_la_lista(Ventana, Caracteristicas) :-    
@@ -265,7 +265,7 @@ ventana_carac :-  listar_labels_carac_usuario(L),
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-agregar_peliculas_recomendadas(Ventana, []) :- !.
+agregar_peliculas_recomendadas(_, []) :- !.
 agregar_peliculas_recomendadas(Ventana, [H|T]) :-   posicion_peliculas_recomendadas(X, Y),
                                                     new(@PeliculaXY, label(nombre, H, font('times', 'roman', 18))),
                                                     send(Ventana, display, @PeliculaXY, point(X, Y)),
@@ -344,12 +344,12 @@ list_actores_usuario(Lista) :- findall(X, actores_usuario(X), Lista).
 list_carac_usuario(Lista) :- findall(X, carac_usuario(X), Lista).
 
 not_found_pelicula([], not_found).
-not_found_pelicula([H|T], recomendaciones).
+not_found_pelicula([_|_], recomendaciones).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
 
 labels_generos_usuario().
-clear_labels_generos_usuario :- retract(labels_generos_usuario(X)), fail.
+clear_labels_generos_usuario :- retract(labels_generos_usuario(_)), fail.
 clear_labels_generos_usuario.
 listar_labels_generos_usuario(Lista) :- findall(X, labels_generos_usuario(X), Lista).
 delete_labels_generos_usuario(Lista) :- eliminar_labels(Lista).
@@ -357,13 +357,13 @@ eliminar_labels([]).
 eliminar_labels([H|T]) :- send(H, free), eliminar_labels(T).
 
 labels_actores_usuario().
-clear_labels_actores_usuario :- retract(labels_actores_usuario(X)), fail.
+clear_labels_actores_usuario :- retract(labels_actores_usuario(_)), fail.
 clear_labels_actores_usuario.
 listar_labels_actores_usuario(Lista) :- findall(X, labels_actores_usuario(X), Lista).
 delete_labels_actores_usuario(Lista) :- eliminar_labels(Lista).
 
 labels_carac_usuario().
-clear_labels_carac_usuario :- retract(labels_carac_usuario(X)), fail.
+clear_labels_carac_usuario :- retract(labels_carac_usuario(_)), fail.
 clear_labels_carac_usuario.
 listar_labels_carac_usuario(Lista) :- findall(X, labels_carac_usuario(X), Lista).
 delete_labels_carac_usuario(Lista) :- eliminar_labels(Lista).
@@ -425,8 +425,8 @@ peliculas_por_genero2(Peliculas, GENERO) :- findall(Pelicula, filtrar_genero2(GE
 peliculas_especificas(Genero, Actores, Peliculas) :- peliculas_por_genero2(PeliculasG, Genero),
                                                   peliculas_actores(Actores, PeliculasG, Peliculas).
 peliculas_actores(_, [], []).
-peliculas_actores(Actores, [[H|[A|C]]|T], Res) :- sub_set(Actores, A), peliculas_actores(Actores, T, Res2), Res = [H | Res2].
-peliculas_actores(Actores, [[H|[A|C]]|T], Res) :- not(sub_set(Actores, A)), peliculas_actores(Actores, T, Res2), Res = Res2. 
+peliculas_actores(Actores, [[H|[A|_]]|T], Res) :- sub_set(Actores, A), peliculas_actores(Actores, T, Res2), Res = [H | Res2].
+peliculas_actores(Actores, [[_|[A|_]]|T], Res) :- not(sub_set(Actores, A)), peliculas_actores(Actores, T, Res2), Res = Res2. 
 
 sub_set([], _).
 sub_set([H|T], L) :- member(H, L), sub_set(T, L).
