@@ -19,6 +19,7 @@ resource(actores, image, image('actores.jpg')).
 resource(caracteristicas, image, image('caracteristicas.jpg')).
 resource(recomendaciones, image, image('recomendaciones.jpg')).
 resource(not_found, image, image('not_found.jpg')).
+resource(pelicula_especifica, image, image('cambiar.jpg')).
 
 mostrar_imagen(Pantalla, Imagen) :- new(Figura, figure),
                                     new(Bitmap, bitmap(resource(Imagen),@on)),
@@ -44,38 +45,73 @@ imagen_pregunta(Ventana, Imagen) :- new(Figura, figure),
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 interfaz_principal:-  new(@main,dialog('Sistema Experto de Cine', size(1000,1000))),
-                      new(@resp1, label(nombre,'',font('times','roman',22))), %largo del frame
-                      new(@lblExp1, label(nombre,'',font('times','roman',14))),
-                      new(@lblExp2, label(nombre,'',font('times','roman',14))),
-                      new(@botonG, button('GENERO',and(message(@prolog, interfaz_genero), and(message(@main, destroy), message(@main, free))))),
-                      new(@botonC, button('CARACTERISTICAS',and(message(@prolog, interfaz_caracteristicas), and(message(@main, destroy), message(@main, free))))),
-                      new(@botonA, button('ACTORES',and(message(@prolog, interfaz_actor), and(message(@main, destroy), message(@main, free))))),
-                      new(@salir,  button('SALIR',and(message(@main,destroy),message(@main,free)))),
+                      new(BtnPeliculaEspecifica, button('PELICULA ESPECIFICA', and(message(@prolog, interfaz_pel_espe), and(message(@main, destroy), message(@main, free))))),
+                      new(Resp1, label(nombre,'',font('times','roman',22))), %largo del frame
+                      new(LblExp1, label(nombre,'',font('times','roman',14))),
+                      new(LblExp2, label(nombre,'',font('times','roman',14))),
+                      new(BotonG, button('GENERO',and(message(@prolog, interfaz_genero), and(message(@main, destroy), message(@main, free))))),
+                      new(BotonC, button('CARACTERISTICAS',and(message(@prolog, interfaz_caracteristicas), and(message(@main, destroy), message(@main, free))))),
+                      new(BotonA, button('ACTORES',and(message(@prolog, interfaz_actor), and(message(@main, destroy), message(@main, free))))),
+                      new(Salir,  button('ATRAS',and(message(@prolog, crea_interfaz_inicio), and(message(@main,destroy),message(@main,free))))),
                       nueva_imagen(@main, fondo),
-                      send(@main, display,@botonG,point(143,425)),
-                      send(@main, display,@botonC,point(243,425)),
-                      send(@main, display,@botonA,point(393,425)),
-                      send(@main, display,@salir,point(495,425)),
-                      send(@main, display,@resp1,point(20,180)),
+                      send(@main, display,BotonG,point(143,425)),
+                      send(@main, display,BotonC,point(243,425)),
+                      send(@main, display,BotonA,point(393,425)),
+                      send(@main, display,Salir,point(495,425)),
+                      send(@main, display,Resp1,point(20,180)),
+                      send(@main, display, BtnPeliculaEspecifica, point(293, 475)),
                       send(@main, open_centered).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+interfaz_pel_espe :- new(@pel_espe, dialog('Sistema Experto de Cine', size(600, 600))),
+                     new(LabelActores, label(nombre, 'ACTORES', font('times', 'roman', 18))),
+                     new(Generos,  new(Generos, menu(generos))),
+                     new(Actor_box, text_item('ACTOR')),
+                     new(BtnAgregarActor, button('AGREGAR ACTOR', message(@prolog, agregar_actor_a_la_lista, @pel_espe, Actor_box?selection))),
+                     new(Btn_recomendar, button('RECOMENDAR', message(@prolog, ventana_pel_espe, Generos?selection))),
+                     new(SalirPelEspe,button('ATRAS',and(message(@prolog, interfaz_principal), and(message(@pel_espe,destroy),message(@pel_espe,free))))),
+                     nueva_imagen(@pel_espe, pelicula_especifica),
+                     send(@pel_espe, display, Generos, point(65, 160)),
+                     send(@pel_espe, display, Actor_box, point(180, 200)),
+                     send(@pel_espe, display, BtnAgregarActor, point(430, 200)),
+                     send(@pel_espe, display, LabelActores, point(337, 265)),
+                     send(@pel_espe, display, Btn_recomendar, point(480, 565)),
+                     send(@pel_espe, display,SalirPelEspe,point(600,565)),
+                     send_list(Generos, append, ['accion', 'dramatico', 'comedia', 'terror', 'romantico']),
+                     send(@pel_espe, open_centered).
+
+ventana_pel_espe(GENERO) :- listar_labels_actores_usuario(L),
+                            delete_labels_actores_usuario(L),
+                            clear_posicion_actores_agregados,
+                            assert(posicion_actores_agregados(270, 290)),
+                            clear_labels_actores_usuario,
+                            new(@ventana_pel_espe, dialog('Sistema Experto de Cine', size(600,500))),
+                            clear_posicion_peliculas_recomendadas,
+                            assert(posicion_peliculas_recomendadas(220, 150)),
+                            list_actores_usuario(ActoresIngresados),
+                            peliculas_especificas(GENERO, ActoresIngresados, Peliculas),
+                            not_found_pelicula(Peliculas, Img_Fondo),
+                            nueva_imagen(@ventana_pel_espe, Img_Fondo),
+                            agregar_peliculas_recomendadas(@ventana_pel_espe, Peliculas),
+                            clear_actores_usuario,
+                            send(@ventana_pel_espe, open_centered).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 interfaz_genero :-  new(@nueva, dialog('Sistema Experto de Cine', size(1000,1000))),
-                    new(@btnAccion, button('ACCION', message(@prolog, agregar_genero_a_la_lista, @nueva, accion))),
-                    new(@btnDramatico, button('DRAMATICO', message(@prolog, agregar_genero_a_la_lista, @nueva, dramatico))),
-                    new(@btnComedia, button('COMEDIA', message(@prolog, agregar_genero_a_la_lista, @nueva, comedia))),
-                    new(@btnTerror, button('TERROR', message(@prolog, agregar_genero_a_la_lista, @nueva, terror))),
-                    new(@btnRomantico, button('ROMANTICO', message(@prolog, agregar_genero_a_la_lista, @nueva, romantico))),
-                    new(@salirGenero,button('SALIR',and(message(@nueva,destroy),message(@nueva,free)))),
-                    new(@btn_recomendar, button('RECOMENDAR', message(@prolog, ventana_generos))),
+                    new(BtnAccion, button('ACCION', message(@prolog, agregar_genero_a_la_lista, @nueva, accion))),
+                    new(BtnDramatico, button('DRAMATICO', message(@prolog, agregar_genero_a_la_lista, @nueva, dramatico))),
+                    new(BtnComedia, button('COMEDIA', message(@prolog, agregar_genero_a_la_lista, @nueva, comedia))),
+                    new(BtnTerror, button('TERROR', message(@prolog, agregar_genero_a_la_lista, @nueva, terror))),
+                    new(BtnRomantico, button('ROMANTICO', message(@prolog, agregar_genero_a_la_lista, @nueva, romantico))),
+                    new(SalirGenero,button('ATRAS',and(message(@prolog, interfaz_principal), and(message(@nueva,destroy),message(@nueva,free))))),
+                    new(Btn_recomendar, button('RECOMENDAR', message(@prolog, ventana_generos))),
                     nueva_imagen(@nueva, generos),
-                    send(@nueva, display,@btnAccion,point(130,250)),
-                    send(@nueva, display,@btnDramatico,point(230,250)),
-                    send(@nueva, display,@btnComedia,point(330,250)),
-                    send(@nueva, display,@btnTerror,point(430,250)),
-                    send(@nueva, display,@btnRomantico,point(530,250)),
-                    send(@nueva, display,@salirGenero,point(600,540)),
-                    send(@nueva, display,@btn_recomendar,point(480,540)),
+                    send(@nueva, display,BtnAccion,point(130,250)),
+                    send(@nueva, display,BtnDramatico,point(230,250)),
+                    send(@nueva, display,BtnComedia,point(330,250)),
+                    send(@nueva, display,BtnTerror,point(430,250)),
+                    send(@nueva, display,BtnRomantico,point(530,250)),
+                    send(@nueva, display,SalirGenero,point(600,540)),
+                    send(@nueva, display,Btn_recomendar,point(480,540)),
                     send(@nueva, open_centered).
 generos_usuario().                
 
@@ -121,20 +157,20 @@ ventana_generos :-  listar_labels_generos_usuario(L),
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 interfaz_actor :- new(@nuevaActores, dialog('Sistema Experto de Cine', size(1000,1000))),
-                  new(@caja_actores, text_item(actores)),
-                  new(@salirActores, button('SALIR',and(message(@nuevaActores,destroy),message(@nuevaActores,free)))),
-                  new(@btnAgregar, button('AGREGAR', message(@prolog, agregar_actor_a_la_lista, @nuevaActores, @caja_actores?selection))),
-                  new(@btn_recomendar, button('RECOMENDAR', message(@prolog, ventana_actores))),
+                  new(Caja_actores, text_item(actores)),
+                  new(SalirActores, button('ATRAS',and(message(@prolog, interfaz_principal),and(message(@nuevaActores,destroy),message(@nuevaActores,free))))),
+                  new(BtnAgregar, button('AGREGAR', message(@prolog, agregar_actor_a_la_lista, @nuevaActores, Caja_actores?selection))),
+                  new(Btn_recomendar, button('RECOMENDAR', message(@prolog, ventana_actores))),
                   nueva_imagen(@nuevaActores, actores),
-                  send(@nuevaActores, display, @caja_actores, point(210, 200)),
-                  send(@nuevaActores, display, @btnAgregar, point(460, 200)),
-                  send(@nuevaActores, display,@salirActores,point(600,565)),
-                  send(@nuevaActores, display,@btn_recomendar,point(480,565)),
+                  send(@nuevaActores, display, Caja_actores, point(210, 200)),
+                  send(@nuevaActores, display, BtnAgregar, point(460, 200)),
+                  send(@nuevaActores, display,SalirActores,point(600,565)),
+                  send(@nuevaActores, display,Btn_recomendar,point(480,565)),
                   send(@nuevaActores, open_centered).
 
 actores_usuario().
 
-posicion_actores_agregados(270, 290).
+posicion_actores_agregados(270, 295).
 
 clear_posicion_actores_agregados :- retract(posicion_actores_agregados(X, Y)), fail.
 clear_posicion_actores_agregados.
@@ -174,15 +210,15 @@ ventana_actores :-  listar_labels_actores_usuario(L),
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 interfaz_caracteristicas :- new(@nuevaCarac, dialog('Sistema Experto de Cine', size(1000,1000))),
-                            new(@caja_carac, text_item(caracteristicas)),
-                            new(@salirCarac, button('SALIR',and(message(@nuevaCarac,destroy),message(@nuevaCarac,free)))),
-                            new(@btnAgregar, button('AGREGAR', message(@prolog, agregar_carac_a_la_lista, @nuevaCarac, @caja_carac?selection))),
-                            new(@btn_recomendar, button('RECOMENDAR', message(@prolog, ventana_carac))),
+                            new(Caja_carac, text_item(caracteristicas)),
+                            new(SalirCarac, button('ATRAS',and(message(@prolog, interfaz_principal),and(message(@nuevaCarac,destroy),message(@nuevaCarac,free))))),
+                            new(BtnAgregar, button('AGREGAR', message(@prolog, agregar_carac_a_la_lista, @nuevaCarac, Caja_carac?selection))),
+                            new(Btn_recomendar, button('RECOMENDAR', message(@prolog, ventana_carac))),
                             nueva_imagen(@nuevaCarac, caracteristicas),
-                            send(@nuevaCarac, display, @caja_carac, point(185, 192)),
-                            send(@nuevaCarac, display, @btnAgregar, point(479, 192)),
-                            send(@nuevaCarac, display,@salirCarac,point(600,565)),
-                            send(@nuevaCarac, display,@btn_recomendar,point(480,565)),
+                            send(@nuevaCarac, display, Caja_carac, point(185, 192)),
+                            send(@nuevaCarac, display, BtnAgregar, point(479, 192)),
+                            send(@nuevaCarac, display,SalirCarac,point(600,565)),
+                            send(@nuevaCarac, display,Btn_recomendar,point(480,565)),
                             send(@nuevaCarac, open_centered).
 
 carac_usuario().
@@ -376,3 +412,18 @@ peliculas_por_genero(Peliculas, GENERO) :- findall(X, filtrar_genero(GENERO, X),
 borrar_repetidos([], []).
 borrar_repetidos([X|Resto], SinRepetidos) :- member(X, Resto), borrar_repetidos(Resto, SinRepetidos).
 borrar_repetidos([X|Resto], SinRepetidos) :- not(member(X, Resto)), borrar_repetidos(Resto, Res), SinRepetidos = [X | Res].
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+filtrar_genero2(GENERO, PELICULA) :- conocimiento(Nombre, GENEROS,_,ACTORES), member(GENERO, GENEROS), PELICULA = [Nombre, ACTORES].
+peliculas_por_genero2(Peliculas, GENERO) :- findall(Pelicula, filtrar_genero2(GENERO, Pelicula), Peliculas).
+
+% peliculas especificas dado el genero y una lista de actores
+peliculas_especificas(Genero, Actores, Peliculas) :- peliculas_por_genero2(PeliculasG, Genero),
+                                                  peliculas_actores(Actores, PeliculasG, Peliculas).
+peliculas_actores(_, [], []).
+peliculas_actores(Actores, [[H|[A|C]]|T], Res) :- sub_set(Actores, A), peliculas_actores(Actores, T, Res2), Res = [H | Res2].
+peliculas_actores(Actores, [[H|[A|C]]|T], Res) :- not(sub_set(Actores, A)), peliculas_actores(Actores, T, Res2), Res = Res2. 
+
+sub_set([], _).
+sub_set([H|T], L) :- member(H, L), sub_set(T, L).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
