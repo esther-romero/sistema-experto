@@ -47,11 +47,13 @@ interfaz_principal:-  new(@main,dialog('Sistema Experto de Cine', size(1000,1000
                       new(@resp1, label(nombre,'',font('times','roman',22))), %largo del frame
                       new(@lblExp1, label(nombre,'',font('times','roman',14))),
                       new(@lblExp2, label(nombre,'',font('times','roman',14))),
+                      new(@btnPeliculaEspecifica, button('PELICULA ESPECIFICA', message(@prolog, ventana_pel_espe))),
                       new(@botonG, button('GENERO',and(message(@prolog, interfaz_genero), and(message(@main, destroy), message(@main, free))))),
                       new(@botonC, button('CARACTERISTICAS',and(message(@prolog, interfaz_caracteristicas), and(message(@main, destroy), message(@main, free))))),
                       new(@botonA, button('ACTORES',and(message(@prolog, interfaz_actor), and(message(@main, destroy), message(@main, free))))),
                       new(@salir,  button('SALIR',and(message(@main,destroy),message(@main,free)))),
                       nueva_imagen(@main, fondo),
+                      send(@main, display, @btnPeliculaEspecifica, point(293, 475)),
                       send(@main, display,@botonG,point(143,425)),
                       send(@main, display,@botonC,point(243,425)),
                       send(@main, display,@botonA,point(393,425)),
@@ -59,6 +61,11 @@ interfaz_principal:-  new(@main,dialog('Sistema Experto de Cine', size(1000,1000
                       send(@main, display,@resp1,point(20,180)),
                       send(@main, open_centered).
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ventana_pel_espe :- new(@pel_espe, dialog('Sistema Experto de Cine', size(600, 600))),
+                    new(Actores_box, text_item(actores_box)),
+                    send(@pel_espe, display, Actores_box, point(100, 100)),
+                    send(@pel_espe, open_centered).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 interfaz_genero :-  new(@nueva, dialog('Sistema Experto de Cine', size(1000,1000))),
                     new(@btnAccion, button('ACCION', message(@prolog, agregar_genero_a_la_lista, @nueva, accion))),
