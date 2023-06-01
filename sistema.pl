@@ -50,7 +50,7 @@ interfaz_principal:-  new(@main,dialog('Sistema Experto de Cine', size(1000,1000
                       new(BotonG, button('GENERO',and(message(@prolog, interfaz_genero), and(message(@main, destroy), message(@main, free))))),
                       new(BotonC, button('CARACTERISTICAS',and(message(@prolog, interfaz_caracteristicas), and(message(@main, destroy), message(@main, free))))),
                       new(BotonA, button('ACTORES',and(message(@prolog, interfaz_actor), and(message(@main, destroy), message(@main, free))))),
-                      new(Salir,  button('ATRAS',and(message(@main,destroy),message(@main,free)))),
+                      new(Salir,  button('ATRAS',and(message(@prolog, crea_interfaz_inicio), and(message(@main,destroy),message(@main,free))))),
                       nueva_imagen(@main, fondo),
                       send(@main, display,BotonG,point(143,425)),
                       send(@main, display,BotonC,point(243,425)),
