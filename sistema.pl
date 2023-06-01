@@ -376,3 +376,18 @@ peliculas_por_genero(Peliculas, GENERO) :- findall(X, filtrar_genero(GENERO, X),
 borrar_repetidos([], []).
 borrar_repetidos([X|Resto], SinRepetidos) :- member(X, Resto), borrar_repetidos(Resto, SinRepetidos).
 borrar_repetidos([X|Resto], SinRepetidos) :- not(member(X, Resto)), borrar_repetidos(Resto, Res), SinRepetidos = [X | Res].
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+filtrar_genero2(GENERO, PELICULA) :- conocimiento(Nombre, GENEROS,_,ACTORES), member(GENERO, GENEROS), PELICULA = [Nombre, ACTORES].
+peliculas_por_genero2(Peliculas, GENERO) :- findall(Pelicula, filtrar_genero2(GENERO, Pelicula), Peliculas).
+
+% peliculas especificas dado el genero y una lista de actores
+peliculas_especificas(Genero, Actores, Peliculas) :- peliculas_por_genero2(PeliculasG, Genero),
+                                                  peliculas_actores(Actores, PeliculasG, Peliculas).
+peliculas_actores(_, [], []).
+peliculas_actores(Actores, [[H|[A|C]]|T], Res) :- sub_set(Actores, A), peliculas_actores(Actores, T, Res2), Res = [H | Res2].
+peliculas_actores(Actores, [[H|[A|C]]|T], Res) :- not(sub_set(Actores, A)), peliculas_actores(Actores, T, Res2), Res = Res2. 
+
+sub_set([], _).
+sub_set([H|T], L) :- member(H, L), sub_set(T, L).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
